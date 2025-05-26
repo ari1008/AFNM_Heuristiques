@@ -59,5 +59,5 @@ Le framework **Quarkus** avec le langage **Java** a été choisi comme base pour
 
 ## Notes supplémentaires
 
-- Ce choix est aligné avec les objectifs pédagogiques du projet : application modulaire, testable, conteneurisée, et moderne.
+- Ce choix est aligné avec les objectifs du projet : application modulaire, testable, conteneurisée, et moderne.
 - Ce framework est aussi un bon compromis entre performance et maintenabilité pour une application d’entreprise de taille moyenne.
