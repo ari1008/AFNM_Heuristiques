@@ -1,4 +1,6 @@
 package org.esgi.domain.model;
 
-public class Role {
+
+public enum Role {
+    EMPLOYEE, MANAGER, SECRETARY
 }
