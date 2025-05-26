@@ -1,7 +1,22 @@
 <h2>Gestion des comptes utilisateurs</h2>
 
+<h2>Gestion des comptes utilisateurs</h2>
+
 <form (ngSubmit)="addUser()">
-  <input type="email" [(ngModel)]="newUser.email" name="email" placeholder="Email" required />
+  <input
+    type="email"
+    [(ngModel)]="newUser.email"
+    name="email"
+    placeholder="Email"
+    required
+  />
+  <input
+    type="password"
+    [(ngModel)]="newUser.password"
+    name="password"
+    placeholder="Mot de passe"
+    required
+  />
   <select [(ngModel)]="newUser.role" name="role">
     <option value="user">Utilisateur</option>
     <option value="admin">Admin</option>
@@ -10,6 +25,7 @@
   </select>
   <button type="submit">Ajouter</button>
 </form>
+
 
 <table>
   <tr>

@@ -13,12 +13,20 @@ import {CheckinComponent} from './checkin-component/checkin.component';
 export const appConfig = {
   providers: [
     provideRouter([
-      { path: 'check-in/:slotId', component: CheckinComponent },
+      { path: 'check-in/:slotId', component: CheckinComponent, canActivate: [authGuard] },
       { path: 'admin/reservations', component: ReservationAdminComponent, canActivate: [canActivateSecretaryOnly] },
       { path: 'admin/users', component: UserManagementComponent, canActivate: [canActivateSecretaryOnly] },
       { path: 'login', component: LoginComponent },
       { path: '', component: ParkingLotComponent, canActivate: [authGuard] },
-      { path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard] }
+      { path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard] },
+
+      // ✅ Route standalone vers dashboard
+      {
+        path: 'dashboard',
+        canActivate: [authGuard], // ou un guard manager si tu préfères
+        loadComponent: () => import('./dashboard-manager-component/dashboard-manager.component')
+          .then(m => m.DashboardManagerComponent)
+      }
     ])
   ]
 };

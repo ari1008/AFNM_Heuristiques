@@ -2,46 +2,36 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import {UserService} from '../mock/user.service'; // ✅ Ajouté
 
 @Component({
   standalone: true,
   selector: 'app-login',
-  imports: [CommonModule, FormsModule],
-  template: `
-    <h2>Connexion</h2>
-    <form (ngSubmit)="login()">
-      <label>Email :</label>
-      <input type="email" [(ngModel)]="email" name="email" required /><br />
-      <label>Mot de passe :</label>
-      <input type="password" [(ngModel)]="password" name="password" required /><br />
-      <button type="submit">Se connecter</button>
-    </form>
-    <p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>
-  `,
-  styles: []
+  imports: [CommonModule, FormsModule], // ✅ Ajouté FormsModule ici
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   email = '';
   password = '';
   errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {}
 
-  login() {
-    if (this.password !== 'admin') {
-      this.errorMessage = 'Mot de passe incorrect';
+  login(): void {
+    const user = this.userService.findUserByEmail(this.email);
+    if (!user) {
+      this.errorMessage = 'Utilisateur introuvable.';
+      return;
+    }
+
+    if (this.password !== user.password) {
+      this.errorMessage = 'Mot de passe incorrect.';
       return;
     }
 
     localStorage.setItem('token', 'fake-token');
-    localStorage.setItem('email', this.email);
-    if (this.email === 'admin@site.com') {
-      localStorage.setItem('role', 'admin');
-    } else if (this.email === 'secretary@site.com') {
-      localStorage.setItem('role', 'secretary');
-    } else {
-      localStorage.setItem('role', 'user');
-    }
+    localStorage.setItem('email', user.email);
+    localStorage.setItem('role', user.role);
 
     this.router.navigate(['/']);
   }

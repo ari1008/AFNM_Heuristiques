@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
 export interface Reservation {
   slotId: string;
   reservedBy: string;
-  startDate: string;
+  startDate: string; // format: 'YYYY-MM-DD'
   endDate: string;
   checkedIn: boolean;
   status: 'active' | 'used' | 'expired' | 'canceled';
@@ -19,42 +19,38 @@ export class ReservationService {
       endDate: '2025-05-30',
       checkedIn: false,
       status: 'active'
+    },
+    {
+      slotId: 'F05',
+      reservedBy: 'bob@company.com',
+      startDate: '2025-05-26',
+      endDate: '2025-05-26',
+      checkedIn: true,
+      status: 'used'
     }
   ];
-  getWorkingDaysCount(start: Date, end: Date): number {
-    let count = 0;
-    const date = new Date(start);
-    while (date <= end) {
-      const day = date.getDay();
-      if (day !== 0 && day !== 6) count++;
-      date.setDate(date.getDate() + 1);
-    }
-    return count;
-  }
-
-  isCheckinLate(reservation: Reservation): boolean {
-    const now = new Date();
-    const deadline = new Date(reservation.startDate);
-    deadline.setHours(11, 0, 0, 0);
-    return !reservation.checkedIn && now > deadline;
-  }
-
-  getHistory(userEmail: string): Reservation[] {
-    return this.mockData.filter(r => r.reservedBy === userEmail);
-  }
-
-
 
   getReservationsForSlot(slotId: string): Reservation[] {
     return this.mockData.filter(r => r.slotId === slotId);
   }
 
-  makeReservation(res: Reservation) {
-    this.mockData.push({ ...res, checkedIn: false, status: 'active' });
+  makeReservation(res: Reservation): void {
+    this.mockData.push(res);
+  }
+
+  isCheckinLate(reservation: Reservation): boolean {
+    const now = new Date();
+    const limit = new Date(reservation.startDate);
+    limit.setHours(11, 0, 0, 0);
+    return !reservation.checkedIn && now > limit;
+  }
+
+  getAllReservations(): Reservation[] {
+    return this.mockData;
   }
 
   getAllHistory(): Reservation[] {
     return this.mockData;
   }
-
 }
+

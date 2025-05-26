@@ -1,0 +1,22 @@
+<div class="dashboard-container">
+  <h2>Dashboard Manager</h2>
+
+  <div class="stats">
+    <div class="card">📦 Total réservations : <strong>{{ totalReservations }}</strong></div>
+    <div class="card">📅 Actives aujourd'hui : <strong>{{ activeToday }}</strong></div>
+    <div class="card">❌ No-shows aujourd'hui : <strong>{{ noShows }}</strong></div>
+    <div class="card">⚡ Bornes utilisées : <strong>{{ electricUsed }}</strong></div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-block">
+      <h4>Taux d'occupation aujourd'hui</h4>
+      <canvas baseChart [data]="usageChartData" [type]="'doughnut'" [options]="chartOptions"></canvas>
+    </div>
+
+    <div class="chart-block">
+      <h4>Répartition bornes électriques</h4>
+      <canvas baseChart [data]="chargerChartData" [type]="'doughnut'" [options]="chartOptions"></canvas>
+    </div>
+  </div>
+</div>
