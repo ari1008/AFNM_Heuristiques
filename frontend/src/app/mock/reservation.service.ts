@@ -52,4 +52,9 @@ export class ReservationService {
   makeReservation(res: Reservation) {
     this.mockData.push({ ...res, checkedIn: false, status: 'active' });
   }
+
+  getAllHistory(): Reservation[] {
+    return this.mockData;
+  }
+
 }
