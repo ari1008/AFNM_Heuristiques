@@ -1,16 +1,15 @@
-package org.esgi.entity.users;
+package org.esgi.infrastructure.persistence.user;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import org.esgi.domain.model.Role;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-public class User extends PanacheEntityBase {
+public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
@@ -23,7 +22,7 @@ public class User extends PanacheEntityBase {
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String hashedPassword;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -32,6 +31,7 @@ public class User extends PanacheEntityBase {
     @Column(nullable = false)
     private boolean hasElectricVehicle;
 
+    // Getters & setters
 
     public UUID getId() {
         return id;
@@ -65,12 +65,12 @@ public class User extends PanacheEntityBase {
         this.email = email.toLowerCase();
     }
 
-    public String getPassword() {
-        return password;
+    public String getHashedPassword() {
+        return hashedPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 
     public Role getRole() {
@@ -89,4 +89,5 @@ public class User extends PanacheEntityBase {
         this.hasElectricVehicle = hasElectricVehicle;
     }
 }
+
 
