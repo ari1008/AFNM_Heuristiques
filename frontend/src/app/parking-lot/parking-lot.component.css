@@ -1,0 +1,38 @@
+.container {
+  text-align: center;
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; /* 💡 Ceci est important */
+  margin-bottom: 12px;
+}
+
+.slot {
+  width: 60px;
+  height: 60px;
+  margin: 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.slot.free {
+  background-color: #c8f7c5;
+  border: 2px solid #4caf50;
+  color: black;
+  cursor: pointer;
+}
+
+.slot.occupied {
+  background-color: #ddd;
+  border: 2px solid #aaa;
+  color: #555;
+  pointer-events: none;
+}

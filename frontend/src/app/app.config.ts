@@ -1,8 +1,17 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+
 import { provideRouter } from '@angular/router';
 
-import { routes } from './app.routes';
+import {ParkingLotComponent} from './parking-lot/parking-lot.component';
+import {SlotDetailComponent} from './slot-detail/slot-detail.component';
+import {authGuard} from './auth-component/auth.guard';
+import {LoginComponent} from './login-component/login.component';
 
-export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes)]
+export const appConfig = {
+  providers: [
+    provideRouter([
+      { path: 'login', component: LoginComponent },
+      { path: '', component: ParkingLotComponent, canActivate: [authGuard] },
+      { path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard] }
+    ])
+  ]
 };

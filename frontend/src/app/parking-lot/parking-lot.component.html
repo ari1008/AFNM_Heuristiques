@@ -1,0 +1,35 @@
+<div class="container">
+  <h2>Parking Lot Map</h2>
+
+  <div class="entry">⬇️ ENTRY</div>
+
+  <div *ngFor="let row of rows">
+    <div class="row">
+      <ng-container *ngFor="let col of columns">
+
+        <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
+          <!-- Optionnel : icône ⚡ si ligne électrique -->
+          <div class="slot" [class.has-plug]="isElectricRow(row)">
+            {{ slot.id }} <span *ngIf="isElectricRow(row)">⚡</span>
+          </div>
+
+          <a
+            [routerLink]="['/slot', getSlot(row, col).id]"
+            class="slot free"
+          >
+            {{ getSlot(row, col).id }}
+          </a>
+        </ng-container>
+        <ng-template #occupiedSlot>
+          <div class="slot occupied">
+            {{ getSlot(row, col).id }} 🔒
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <div *ngIf="row === 'D'" class="arrow">⬅️</div>
+    </div>
+  </div>
+
+  <div class="exit">⬇️ EXIT</div>
+</div>
