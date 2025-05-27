@@ -19,25 +19,22 @@ public class UserService {
     Logger log;
 
     @Transactional
-    public UserEntity create(String firstname,
-                             String lastname,
-                             String email,
-                             String plainPassword,
-                             String role) {
+    public UserEntity create(UserResource.CreateUserRequest createUserRequest) {
 
-        if (UserEntity.emailExists(email)) {
+        if (UserEntity.emailExists(createUserRequest.email())) {
             throw new IllegalArgumentException("Email already in use");
         }
-        if (plainPassword.length() < 8) {
+        if (createUserRequest.password().length() < 8) {
             throw new IllegalArgumentException("Password must be at least 8 characters");
         }
 
         UserEntity user = new UserEntity();
-        user.firstname    = firstname;
-        user.lastname     = lastname;
-        user.email        = email.toLowerCase();
-        user.passwordHash = hasher.hash(plainPassword);
-        user.role         = Role.valueOf(role.toUpperCase());
+        user.firstname    = createUserRequest.firstname();
+        user.lastname     = createUserRequest.lastname();
+        user.email        = createUserRequest.email().toLowerCase();
+        user.passwordHash = hasher.hash(createUserRequest.password());
+        user.role         = Role.valueOf(createUserRequest.role().toUpperCase());
+        user.isHybridOrElectric = createUserRequest.isElectricOrHybrid();
 
         repo.persist(user);
         log.infov("User {0} created (id={1})", user.email, user.id);

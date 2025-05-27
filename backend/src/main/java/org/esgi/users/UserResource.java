@@ -17,15 +17,16 @@ public class UserResource {
             String lastname,
             String email,
             String password,
-            String role) { }
+            String role,
+            boolean isElectricOrHybrid) { }
 
-    public static record UserResponse(String id, String firstname, String lastname, String email, String role) { }
+    public static record UserResponse(String id, String firstname, String lastname, String email, String role, boolean isElectricOrHybrid) { }
 
     @POST
     public Response createUser(CreateUserRequest req) {
         try {
-            UserEntity u = service.create(req.firstname(), req.lastname(), req.email(), req.password(), req.role());
-            UserResponse body = new UserResponse(u.id.toString(), u.firstname, u.lastname, u.email, u.role.toString());
+            UserEntity u = service.create(req);
+            UserResponse body = new UserResponse(u.id.toString(), u.firstname, u.lastname, u.email, u.role.toString(), u.isHybridOrElectric);
             return Response.status(Response.Status.CREATED).entity(body).build();
         } catch (IllegalArgumentException ex) {
             return Response.status(Response.Status.BAD_REQUEST)

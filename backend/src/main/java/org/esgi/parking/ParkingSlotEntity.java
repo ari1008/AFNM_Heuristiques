@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "parking_slots")
+@Table(name = "parking_slots", uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class ParkingSlotEntity extends PanacheEntityBase {
 
     @Id
@@ -14,12 +14,19 @@ public class ParkingSlotEntity extends PanacheEntityBase {
     public UUID id;
 
     @Column(nullable = false, unique = true)
-    public String code;          // ex: A01, B03
+    public String code; // e.g., A01, B07, F10
 
     @Column(nullable = false)
-    public boolean electric;     // borne de recharge ?
+    public String row;  // A to F
+
+    @Column(nullable = false)
+    public int number;  // 1 to 10
+
+    @Column(nullable = false)
+    public boolean hasCharger;
 
     @PrePersist
-    public void generateId() { if (id == null) id = UUID.randomUUID(); }
+    public void assignId() {
+        if (id == null) id = UUID.randomUUID();
+    }
 }
-
