@@ -31,8 +31,11 @@ public class UserEntity extends PanacheEntityBase {
 
     @Column
     public String sessionToken;
+    @Column(nullable = false)
+    public boolean isHybridOrElectric;
 
     public LocalDateTime createdAt = LocalDateTime.now();
+
 
     @PrePersist
     public void generateId() {
