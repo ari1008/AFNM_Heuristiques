@@ -1,0 +1,52 @@
+<h2>Réservation pour la place {{ slotId }}</h2>
+<!-- Section visible uniquement pour secrétaire ou admin -->
+<div *ngIf="isAdminOrSecretary() && reservations.length">
+  <h3>Réservée par :</h3>
+  <ul>
+    <li *ngFor="let r of reservations">
+      {{ r.reservedBy }} – du {{ r.startDate }} au {{ r.endDate }} – Statut : {{ r.status }} – Check-in : {{ r.checkedIn ? '✅' : '❌' }}
+    </li>
+  </ul>
+</div>
+
+
+
+<!-- Formulaire de réservation -->
+<form (ngSubmit)="submitReservation()">
+  <mat-form-field>
+    <mat-label>Date de début</mat-label>
+    <input
+      matInput
+      [matDatepicker]="startPicker"
+      [(ngModel)]="selectedStartDate"
+      name="startDate"
+      required
+    />
+    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+    <mat-datepicker #startPicker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Date de fin</mat-label>
+    <input
+      matInput
+      [matDatepicker]="endPicker"
+      [(ngModel)]="selectedEndDate"
+      name="endDate"
+      required
+    />
+    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+    <mat-datepicker #endPicker></mat-datepicker>
+  </mat-form-field>
+
+  <p *ngIf="!isEndDateValid()" style="color: red">
+    ❌ Durée max dépassée ({{ maxDuration() }} jours autorisés).
+  </p>
+
+  <button
+    type="submit"
+    [disabled]="!selectedStartDate || !selectedEndDate || !isEndDateValid()"
+  >
+    Réserver
+  </button>
+</form>
