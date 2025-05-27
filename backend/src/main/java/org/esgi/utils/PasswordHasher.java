@@ -11,7 +11,7 @@ public class PasswordHasher {
         return BCrypt.hashpw(plain, BCrypt.gensalt());
     }
 
-    public boolean match(String plain, String hashed) {
+    public static boolean verify(String plain, String hashed) {
         return BCrypt.checkpw(plain, hashed);
     }
 }
