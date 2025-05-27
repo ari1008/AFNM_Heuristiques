@@ -5,7 +5,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.esgi.auth.dto.LoginRequest;
-import org.esgi.auth.dto.LoginResponse;
+import org.esgi.users.UserEntity;
 
 @Path("/auth")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -18,11 +18,14 @@ public class AuthResource {
     @POST
     @Path("/login")
     public Response login(LoginRequest request) {
-        try {
-            return Response.ok(authService.authenticate(request)).build();
-        } catch (WebApplicationException e) {
-            return Response.status(e.getResponse().getStatus()).entity(e.getMessage()).build();
-        }
+        UserEntity user = authService.login(request.email, request.password);
+        return Response.ok(user.sessionToken).build();
+    }
+
+    @POST
+    @Path("/logout")
+    public Response logout(@HeaderParam("Authorization") String token) {
+        authService.logout(token);
+        return Response.noContent().build();
     }
 }
-

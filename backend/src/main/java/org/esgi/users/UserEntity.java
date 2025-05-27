@@ -29,6 +29,9 @@ public class UserEntity extends PanacheEntityBase {
     @Column(nullable = false)
     public Role role;
 
+    @Column
+    public String sessionToken;
+
     public LocalDateTime createdAt = LocalDateTime.now();
 
     @PrePersist
