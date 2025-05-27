@@ -1,13 +1,11 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:15
     container_name: parking-postgres
     environment:
-      POSTGRES_DB: parkingdb
       POSTGRES_USER: parkinguser
       POSTGRES_PASSWORD: parkingpass
+      POSTGRES_DB: parkingdb
     ports:
       - "5432:5432"
     volumes:
