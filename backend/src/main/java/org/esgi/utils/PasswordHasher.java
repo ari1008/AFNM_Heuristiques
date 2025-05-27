@@ -1,4 +1,4 @@
-package org.esgi.users;
+package org.esgi.utils;
 
 
 import jakarta.enterprise.context.ApplicationScoped;

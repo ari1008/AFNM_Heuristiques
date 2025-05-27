@@ -3,6 +3,7 @@ package org.esgi.users;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import org.esgi.utils.PasswordHasher;
 import org.jboss.logging.Logger;
 
 import java.util.UUID;
@@ -12,7 +13,8 @@ import java.util.UUID;
 public class UserService {
 
     @Inject UserRepository repo;
-    @Inject PasswordHasher hasher;
+    @Inject
+    PasswordHasher hasher;
     @Inject
     Logger log;
 
