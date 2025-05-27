@@ -5,17 +5,26 @@
     ⚡ Les rangées A et F sont équipées de bornes de recharge électrique.
   </p>
 
-  <div style="text-align: right;">
+  <p *ngIf="isLoggedIn">email: {{ userEmail }} | rôle: {{ role }}</p>
+
+  <div style="text-align: right;" *ngIf="isLoggedIn">
     <button (click)="logout()">Se déconnecter</button>
   </div>
 
-  <p>email: {{ userEmail }} | rôle: {{ role }}</p>
+  <div style="text-align: right;" *ngIf="!isLoggedIn">
+    <button (click)="createAccount()">Se créer un compte</button>
+  </div>
+
+  <div style="text-align: right;" *ngIf="!isLoggedIn">
+    <button (click)="redirectToLogin()">Se connecter</button>
+  </div>
+
 
   <div *ngFor="let row of rows">
     <div class="row">
       <ng-container *ngFor="let col of columns">
         <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
-          <ng-container *ngIf="isLoggedIn(); else loginRedirect">
+          <ng-container *ngIf="isLoggedIn; else loginRedirect">
             <a
               [routerLink]="['/slot', getSlot(row, col).id]"
               class="slot free"

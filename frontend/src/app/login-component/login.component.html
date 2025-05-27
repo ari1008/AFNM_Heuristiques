@@ -1,5 +1,8 @@
 <h2>Connexion</h2>
 
+<p *ngIf="errorMessage" style="color: red;">
+  {{ errorMessage }}
+</p>
 <form (ngSubmit)="login()">
   <label>Email :</label>
   <input type="email" [(ngModel)]="email" name="email" required /><br />
@@ -10,4 +13,3 @@
   <button type="submit">Se connecter</button>
 </form>
 
-<p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>

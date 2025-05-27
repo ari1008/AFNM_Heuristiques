@@ -1,8 +1,8 @@
-// ✅ parking-lot.component.ts (mis à jour avec login/logout complets)
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ReservationService } from '../mock/reservation.service';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {Router, RouterModule} from '@angular/router';
+import {ReservationService} from '../mock/reservation.service';
+import {AuthService} from '../mock/auth.service';
 
 @Component({
   selector: 'app-parking-lot',
@@ -11,21 +11,44 @@ import { ReservationService } from '../mock/reservation.service';
   templateUrl: './parking-lot.component.html',
   styleUrls: ['./parking-lot.component.css']
 })
-export class ParkingLotComponent {
+export class ParkingLotComponent implements OnInit {
   rows = ['A', 'B', 'C', 'D', 'E', 'F'];
-  columns = Array.from({ length: 10 }, (_, i) => i + 1);
+  columns = Array.from({length: 10}, (_, i) => i + 1);
 
+  session: string | null = null;
   role: string | null = null;
   userEmail: string | null = null;
+  isLoggedIn: boolean = true;
 
-  constructor(private reservationService: ReservationService) {
-    this.role = localStorage.getItem('role');
-    this.userEmail = localStorage.getItem('email');
+  constructor(
+    private reservationService: ReservationService,
+    private router: Router,
+    private authService: AuthService
+  ) {
+  }
+
+
+  ngOnInit(): void {
+    this.authService.isLoggedIn$.subscribe((logged) => {
+      this.isLoggedIn = !!localStorage.getItem('session');
+      this.userEmail = localStorage.getItem('email');
+      this.role = localStorage.getItem('role');
+    });
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/']);
+    });
+  }
+
+  createAccount(): void {
+    this.router.navigate(['/register']);
   }
 
   getSlot(row: string, col: number) {
     const id = `${row}${col.toString().padStart(2, '0')}`;
-    return { id, occupied: this.isSlotReservedToday(id) };
+    return {id, occupied: this.isSlotReservedToday(id)};
   }
 
   isSlotReservedToday(slotId: string): boolean {
@@ -36,22 +59,19 @@ export class ParkingLotComponent {
     );
   }
 
+
   isElectricRow(row: string): boolean {
     return row === 'A' || row === 'F';
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.userEmail;
   }
 
   redirectToLogin(): void {
     window.location.href = '/login';
   }
 
-  logout(): void {
+
+  private removeAll() {
+    localStorage.removeItem('session');
     localStorage.removeItem('email');
     localStorage.removeItem('role');
-    localStorage.removeItem('token');
-    window.location.href = '/login';
   }
 }

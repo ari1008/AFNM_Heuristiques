@@ -5,8 +5,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.ext.Provider;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.Provider;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserRepository;
 
@@ -23,9 +23,13 @@ public class TokenFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String path = requestContext.getUriInfo().getPath();
-        if (path.startsWith("/auth/login") || path.startsWith("/auth/logout")) return;
+        if (path.startsWith("/auth/login") || path.startsWith("/auth/logout") || path.startsWith("/users")){
+            return;
+        }
+
 
         String authHeader = requestContext.getHeaderString("Authorization");
+        System.out.println("hello world 1");
         if (authHeader == null || !authHeader.startsWith("Token ")) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             return;

@@ -1,0 +1,32 @@
+<h2>Créer un compte</h2>
+
+<p *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</p>
+<p *ngIf="successMessage" style="color: green;">{{ successMessage }}</p>
+
+<form (ngSubmit)="register()">
+  <label>Prénom :</label>
+  <input type="text" [(ngModel)]="firstname" name="firstname" required><br />
+
+  <label>Nom :</label>
+  <input type="text" [(ngModel)]="lastname" name="lastname" required><br />
+
+  <label>Email :</label>
+  <input type="email" [(ngModel)]="email" name="email" required><br />
+
+  <label>Mot de passe :</label>
+  <input type="password" [(ngModel)]="password" name="password" required><br />
+
+  <label>Rôle :</label>
+  <select [(ngModel)]="role" name="role" required>
+    <option value="EMPLOYEE">Utilisateur</option>
+    <option value="SECRETARY">Secrétaire</option>
+    <option value="SECRETARY">Manager</option>
+  </select><br />
+
+  <label>
+    <input type="checkbox" [(ngModel)]="isElectricOrHybrid" name="isElectricOrHybrid">
+    Véhicule électrique ou hybride
+  </label><br />
+
+  <button type="submit">Créer le compte</button>
+</form>
