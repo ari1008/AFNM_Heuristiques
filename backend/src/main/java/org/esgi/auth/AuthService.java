@@ -1,17 +1,15 @@
 package org.esgi.auth;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import org.esgi.auth.dto.LoginRequest;
-import org.esgi.auth.dto.LoginResponse;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserRepository;
 import org.esgi.utils.PasswordHasher;
-import org.esgi.auth.utils.JwtUtils;
 
-import jakarta.inject.Inject;
 import java.util.Optional;
+import java.util.UUID;
 
 @ApplicationScoped
 public class AuthService {
@@ -19,14 +17,27 @@ public class AuthService {
     @Inject
     UserRepository userRepository;
 
-    public LoginResponse authenticate(LoginRequest request) {
-        Optional<UserEntity> userOpt = userRepository.find("email", request.email.toLowerCase()).firstResultOptional();
-        if (userOpt.isEmpty() || !PasswordHasher.verify(request.password, userOpt.get().passwordHash)) {
-            throw new WebApplicationException("Invalid email or password", Response.Status.UNAUTHORIZED);
+    public UserEntity login(String email, String password) {
+        Optional<UserEntity> userOpt = userRepository.find("email", email.toLowerCase()).firstResultOptional();
+        if (userOpt.isEmpty() || !PasswordHasher.verify(password, userOpt.get().passwordHash)) {
+            throw new WebApplicationException("Invalid credentials", Response.Status.UNAUTHORIZED);
         }
 
-        var user = userOpt.get();
-        var token = JwtUtils.generateToken(user);
-        return new LoginResponse(token, user.email, user.role.toString());
+        UserEntity user = userOpt.get();
+        user.sessionToken = UUID.randomUUID().toString();
+        userRepository.persist(user);
+        return user;
+    }
+
+    public void logout(String tokenHeader) {
+        if (tokenHeader == null || !tokenHeader.startsWith("Token ")) {
+            throw new WebApplicationException("Invalid token", Response.Status.BAD_REQUEST);
+        }
+        String token = tokenHeader.substring("Token ".length());
+        Optional<UserEntity> userOpt = userRepository.find("sessionToken", token).firstResultOptional();
+        userOpt.ifPresent(user -> {
+            user.sessionToken = null;
+            userRepository.persist(user);
+        });
     }
 }
