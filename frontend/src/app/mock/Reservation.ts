@@ -1,6 +1,9 @@
-interface Reservation {
-  slotId: string;
-  reservedBy: string; // email ou nom
-  startDate: string;
-  endDate: string;
+export interface Reservation {
+  slotId: {
+    number: number;
+    row: string;
+  };
+  reservedBy: string;
+  startDate: Date;
+  endDate: Date;
 }
