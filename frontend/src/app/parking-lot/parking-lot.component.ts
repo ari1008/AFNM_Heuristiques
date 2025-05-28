@@ -65,7 +65,7 @@ export class ParkingLotComponent implements OnInit {
   }
 
   redirectToLogin(): void {
-    window.location.href = '/login';
+    this.router.navigate(['/login']);
   }
 
 
