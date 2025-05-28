@@ -1,11 +1,13 @@
-<div class="container">
+<div class="container" xmlns="http://www.w3.org/1999/html">
   <h2>Parking Lot Map</h2>
 
-  <p class="info-electric">
-    ⚡ Les rangées A et F sont équipées de bornes de recharge électrique.
-  </p>
-
   <p *ngIf="isLoggedIn">email: {{ userEmail }} | rôle: {{ role }}</p>
+
+  <p>
+    ⚡ Borne de recharge électrique
+    <br>
+    🔒 Place indisponible pour la journée en cours
+  </p>
 
   <div style="text-align: right;" *ngIf="isLoggedIn">
     <button (click)="logout()">Se déconnecter</button>
@@ -20,7 +22,7 @@
     <div class="entry-label">⬇️ ENTRY</div>
   </div>
 
-  <!-- Grille du parking -->
+  <!-- Parking grid -->
   <div *ngFor="let row of rows" class="row">
     <ng-container *ngFor="let col of columns">
       <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
