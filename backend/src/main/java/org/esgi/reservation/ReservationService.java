@@ -1,0 +1,111 @@
+package org.esgi.reservation;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
+import org.esgi.parking.ParkingSlotEntity;
+import org.esgi.parking.ParkingSlotRepository;
+import org.esgi.reservation.resources.ReservationMapper;
+import org.esgi.reservation.resources.dto.in.ReservationRequest;
+import org.esgi.reservation.resources.dto.in.ReservationUpdateRequest;
+import org.esgi.reservation.resources.dto.out.ReservationResponse;
+import org.esgi.users.UserEntity;
+import org.esgi.users.UserRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
+@ApplicationScoped
+public class ReservationService {
+
+    @Inject
+    ReservationRepository reservationRepository;
+
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    ParkingSlotRepository parkingSlotRepository;
+
+    @Inject
+    ReservationMapper reservationMapper;
+
+    public void createReservation(ReservationRequest request) {
+        UserEntity user = userRepository.findById(request.userId);
+        ParkingSlotEntity slot = parkingSlotRepository.findById(request.slotId);
+
+        validateReservationDates(request.dates, user);
+        validateVehicleCompatibility(user, slot);
+
+        ReservationEntity reservation = reservationMapper.fromRequest(request, user, slot);
+        reservationRepository.persist(reservation);
+    }
+
+    public void updateReservation(UUID id, ReservationUpdateRequest update) {
+        ReservationEntity existing = reservationRepository.findById(id);
+        if (existing == null) {
+            throw new WebApplicationException("Reservation not found", Response.Status.NOT_FOUND);
+        }
+
+        UserEntity user = userRepository.findById(existing.userId);
+        ParkingSlotEntity slot = existing.slot;
+
+        validateReservationRange(update.startDateTime, update.endDateTime);
+        validateVehicleCompatibility(user, slot);
+
+        reservationMapper.applyUpdate(existing, update);
+        reservationRepository.persist(existing);
+    }
+
+    public List<ReservationResponse> getAllReservations() {
+        return reservationMapper.toResponseList(reservationRepository.listAll());
+    }
+
+    public void deleteReservation(UUID id) {
+        ReservationEntity res = reservationRepository.findById(id);
+        if (res == null) {
+            throw new WebApplicationException("Reservation not found", Response.Status.NOT_FOUND);
+        }
+        reservationRepository.delete(res);
+    }
+
+    private void validateReservationDates(List<LocalDate> dates, UserEntity user) {
+        if (dates == null || dates.isEmpty()) {
+            throw new WebApplicationException("Reservation dates cannot be empty", Response.Status.BAD_REQUEST);
+        }
+
+        int maxDays = user.role.name().equals("MANAGER") ? 30 : 5;
+        if (dates.size() > maxDays) {
+            throw new WebApplicationException("Too many reservation days", Response.Status.BAD_REQUEST);
+        }
+
+        for (LocalDate date : dates) {
+            if (date.isBefore(LocalDate.now())) {
+                throw new WebApplicationException("Cannot reserve past dates", Response.Status.BAD_REQUEST);
+            }
+        }
+
+        LocalDate start = dates.get(0);
+        LocalDate end = dates.get(dates.size() - 1);
+        validateReservationRange(start, end);
+    }
+
+    private void validateReservationRange(LocalDate start, LocalDate end) {
+        if (start == null || end == null) {
+            throw new WebApplicationException("Start and end dates are required", Response.Status.BAD_REQUEST);
+        }
+
+        if (start.isAfter(end)) {
+            throw new WebApplicationException("Start date must be before or equal to end date", Response.Status.BAD_REQUEST);
+        }
+    }
+
+    private void validateVehicleCompatibility(UserEntity user, ParkingSlotEntity slot) {
+        boolean isElectricSlot = slot.row.equalsIgnoreCase("A") || slot.row.equalsIgnoreCase("F");
+        if (isElectricSlot && !user.isHybridOrElectric) {
+            throw new WebApplicationException("Only electric/hybrid vehicles can use A/F rows", Response.Status.FORBIDDEN);
+        }
+    }
+}

@@ -5,52 +5,58 @@
     ⚡ Les rangées A et F sont équipées de bornes de recharge électrique.
   </p>
 
-  <div style="text-align: right;">
+  <p *ngIf="isLoggedIn">email: {{ userEmail }} | rôle: {{ role }}</p>
+
+  <div style="text-align: right;" *ngIf="isLoggedIn">
     <button (click)="logout()">Se déconnecter</button>
   </div>
+  <div style="text-align: right;" *ngIf="!isLoggedIn">
+    <button (click)="createAccount()">Se créer un compte</button>
+    <button (click)="redirectToLogin()">Se connecter</button>
+  </div>
 
-  <p>email: {{ userEmail }} | rôle: {{ role }}</p>
+  <!-- ENTRY-->
+  <div class="entry-row">
+    <div class="entry-label">⬇️ ENTRY</div>
+  </div>
 
-  <div *ngFor="let row of rows">
-    <div class="row">
-      <ng-container *ngFor="let col of columns">
-        <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
-          <ng-container *ngIf="isLoggedIn(); else loginRedirect">
-            <a
-              [routerLink]="['/slot', getSlot(row, col).id]"
-              class="slot free"
-              [class.has-plug]="isElectricRow(row)"
-            >
-              {{ getSlot(row, col).id }}
-              <span *ngIf="isElectricRow(row)">⚡</span>
-            </a>
-          </ng-container>
-
-          <ng-template #loginRedirect>
-            <div
-              class="slot free disabled"
-              [class.has-plug]="isElectricRow(row)"
-              (click)="redirectToLogin()"
-              style="cursor: not-allowed;"
-              title="Connectez-vous pour réserver"
-            >
-              {{ getSlot(row, col).id }}
-              <span *ngIf="isElectricRow(row)">⚡</span>
-            </div>
-          </ng-template>
-
+  <!-- Grille du parking -->
+  <div *ngFor="let row of rows" class="row">
+    <ng-container *ngFor="let col of columns">
+      <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
+        <ng-container *ngIf="isLoggedIn; else loginRedirect">
+          <a
+            [routerLink]="['/slot', getSlot(row, col).id]"
+            class="slot free"
+            [class.has-plug]="isElectricRow(row)">
+            {{ getSlot(row, col).id }}
+            <span *ngIf="isElectricRow(row)">⚡</span>
+          </a>
         </ng-container>
 
-        <ng-template #occupiedSlot>
+        <ng-template #loginRedirect>
           <div
-            class="slot occupied"
+            class="slot free disabled"
             [class.has-plug]="isElectricRow(row)"
-          >
-            {{ getSlot(row, col).id }} 🔒
+            (click)="redirectToLogin()"
+            title="Connectez-vous pour réserver">
+            {{ getSlot(row, col).id }}
             <span *ngIf="isElectricRow(row)">⚡</span>
           </div>
         </ng-template>
       </ng-container>
-    </div>
+
+      <ng-template #occupiedSlot>
+        <div class="slot occupied" [class.has-plug]="isElectricRow(row)">
+          {{ getSlot(row, col).id }} 🔒
+          <span *ngIf="isElectricRow(row)">⚡</span>
+        </div>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <!-- EXIT-->
+  <div class="exit-row">
+    <div class="exit-label">EXIT ⬇️</div>
   </div>
 </div>

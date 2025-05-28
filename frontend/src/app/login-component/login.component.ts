@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import {UserService} from '../mock/user.service'; // ✅ Ajouté
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {AuthService} from '../mock/auth.service';
 
 @Component({
   standalone: true,
   selector: 'app-login',
-  imports: [CommonModule, FormsModule], // ✅ Ajouté FormsModule ici
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
@@ -15,24 +15,26 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router,
+              private authService: AuthService
+  ) {
+  }
 
-  login(): void {
-    const user = this.userService.findUserByEmail(this.email);
-    if (!user) {
-      this.errorMessage = 'Utilisateur introuvable.';
-      return;
-    }
-
-    if (this.password !== user.password) {
-      this.errorMessage = 'Mot de passe incorrect.';
-      return;
-    }
-
-    localStorage.setItem('token', 'fake-token');
-    localStorage.setItem('email', user.email);
-    localStorage.setItem('role', user.role);
-
-    this.router.navigate(['/']);
+  login() {
+    this.authService.login(this.email, this.password).subscribe({
+      next: (res) => {
+        localStorage.setItem('session', res.sessionToken.toString());
+        localStorage.setItem('email', res.email);
+        localStorage.setItem('role', res.role);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.errorMessage = "Email ou mot de passe incorrect";
+        } else {
+          this.errorMessage = "Erreur de connexion. Veuillez réessayer plus tard.";
+        }
+      }
+    });
   }
 }
