@@ -1,4 +1,4 @@
-package org.esgi.users;
+package org.esgi.users.resources;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -7,6 +7,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.esgi.users.UserEntity;
+import org.esgi.users.UserService;
+import org.esgi.users.resources.in.CreateUserRequest;
+import org.esgi.users.resources.out.UserResponse;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,19 +19,6 @@ public class UserResource {
 
     @Inject
     UserService service;
-
-    public record CreateUserRequest(
-            String firstname,
-            String lastname,
-            String email,
-            String password,
-            String role,
-            boolean isElectricOrHybrid) {
-    }
-
-    public record UserResponse(String id, String firstname, String lastname, String email, String role,
-                               boolean isElectricOrHybrid) {
-    }
 
     @POST
     public Response createUser(CreateUserRequest req) {
