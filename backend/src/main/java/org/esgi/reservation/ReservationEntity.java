@@ -4,7 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import org.esgi.parking.ParkingSlotEntity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -25,10 +25,10 @@ public class ReservationEntity extends PanacheEntityBase {
 
 
     @Column(nullable = false)
-    public LocalDateTime startDateTime;
+    public LocalDate startDate;
 
     @Column(nullable = false)
-    public LocalDateTime endDateTime;
+    public LocalDate endDate;
 
     @PrePersist
     public void generateId() { if (id == null) id = UUID.randomUUID(); }

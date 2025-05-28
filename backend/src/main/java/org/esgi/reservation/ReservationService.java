@@ -6,14 +6,14 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.esgi.parking.ParkingSlotEntity;
 import org.esgi.parking.ParkingSlotRepository;
-import org.esgi.reservation.resources.in.ReservationRequest;
-import org.esgi.reservation.resources.in.ReservationUpdateRequest;
+import org.esgi.reservation.resources.ReservationMapper;
+import org.esgi.reservation.resources.dto.in.ReservationRequest;
+import org.esgi.reservation.resources.dto.in.ReservationUpdateRequest;
+import org.esgi.reservation.resources.dto.out.ReservationResponse;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,36 +29,18 @@ public class ReservationService {
     @Inject
     ParkingSlotRepository parkingSlotRepository;
 
+    @Inject
+    ReservationMapper reservationMapper;
+
     public void createReservation(ReservationRequest request) {
         UserEntity user = userRepository.findById(request.userId);
         ParkingSlotEntity slot = parkingSlotRepository.findById(request.slotId);
 
-        int maxDays = user.role.name().equals("MANAGER") ? 30 : 5;
-        if (request.dates.size() > maxDays) {
-            throw new WebApplicationException("Too many reservation days", Response.Status.BAD_REQUEST);
-        }
+        validateReservationDates(request.dates, user);
+        validateVehicleCompatibility(user, slot);
 
-        for (LocalDate date : request.dates) {
-            if (date.isBefore(LocalDate.now())) {
-                throw new WebApplicationException("Cannot reserve past dates", Response.Status.BAD_REQUEST);
-            }
-
-            LocalTime start = request.period.equalsIgnoreCase("AM") ? LocalTime.of(8, 0) : LocalTime.of(13, 0);
-            LocalTime end = request.period.equalsIgnoreCase("AM") ? LocalTime.of(12, 0) : LocalTime.of(18, 0);
-
-            LocalDateTime startDateTime = LocalDateTime.of(date, start);
-            LocalDateTime endDateTime = LocalDateTime.of(date, end);
-
-            validateReservation(user, slot, startDateTime, endDateTime);
-
-            ReservationEntity reservation = new ReservationEntity();
-            reservation.userId = user.id;
-            reservation.slot = slot;
-            reservation.startDateTime = startDateTime;
-            reservation.endDateTime = endDateTime;
-
-            reservationRepository.persist(reservation);
-        }
+        ReservationEntity reservation = reservationMapper.fromRequest(request, user, slot);
+        reservationRepository.persist(reservation);
     }
 
     public void updateReservation(UUID id, ReservationUpdateRequest update) {
@@ -70,40 +52,60 @@ public class ReservationService {
         UserEntity user = userRepository.findById(existing.userId);
         ParkingSlotEntity slot = existing.slot;
 
-        validateReservation(user, slot, update.startDateTime, update.endDateTime);
+        validateReservationRange(update.startDateTime, update.endDateTime);
+        validateVehicleCompatibility(user, slot);
 
-        existing.startDateTime = update.startDateTime;
-        existing.endDateTime = update.endDateTime;
-
+        reservationMapper.applyUpdate(existing, update);
         reservationRepository.persist(existing);
     }
 
-    private void validateReservation(UserEntity user, ParkingSlotEntity slot, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        if (startDateTime.isBefore(LocalDateTime.now())) {
-            throw new WebApplicationException("Cannot reserve in the past", Response.Status.BAD_REQUEST);
+    public List<ReservationResponse> getAllReservations() {
+        return reservationMapper.toResponseList(reservationRepository.listAll());
+    }
+
+    public void deleteReservation(UUID id) {
+        ReservationEntity res = reservationRepository.findById(id);
+        if (res == null) {
+            throw new WebApplicationException("Reservation not found", Response.Status.NOT_FOUND);
+        }
+        reservationRepository.delete(res);
+    }
+
+    private void validateReservationDates(List<LocalDate> dates, UserEntity user) {
+        if (dates == null || dates.isEmpty()) {
+            throw new WebApplicationException("Reservation dates cannot be empty", Response.Status.BAD_REQUEST);
         }
 
+        int maxDays = user.role.name().equals("MANAGER") ? 30 : 5;
+        if (dates.size() > maxDays) {
+            throw new WebApplicationException("Too many reservation days", Response.Status.BAD_REQUEST);
+        }
+
+        for (LocalDate date : dates) {
+            if (date.isBefore(LocalDate.now())) {
+                throw new WebApplicationException("Cannot reserve past dates", Response.Status.BAD_REQUEST);
+            }
+        }
+
+        LocalDate start = dates.get(0);
+        LocalDate end = dates.get(dates.size() - 1);
+        validateReservationRange(start, end);
+    }
+
+    private void validateReservationRange(LocalDate start, LocalDate end) {
+        if (start == null || end == null) {
+            throw new WebApplicationException("Start and end dates are required", Response.Status.BAD_REQUEST);
+        }
+
+        if (start.isAfter(end)) {
+            throw new WebApplicationException("Start date must be before or equal to end date", Response.Status.BAD_REQUEST);
+        }
+    }
+
+    private void validateVehicleCompatibility(UserEntity user, ParkingSlotEntity slot) {
         boolean isElectricSlot = slot.row.equalsIgnoreCase("A") || slot.row.equalsIgnoreCase("F");
         if (isElectricSlot && !user.isHybridOrElectric) {
             throw new WebApplicationException("Only electric/hybrid vehicles can use A/F rows", Response.Status.FORBIDDEN);
         }
-
-        if (!startDateTime.toLocalDate().equals(endDateTime.toLocalDate())) {
-            throw new WebApplicationException("Reservation must be on a single day", Response.Status.BAD_REQUEST);
-        }
-
-        LocalTime start = startDateTime.toLocalTime();
-        LocalTime end = endDateTime.toLocalTime();
-
-        boolean isValidAM = start.equals(LocalTime.of(8, 0)) && end.equals(LocalTime.of(12, 0));
-        boolean isValidPM = start.equals(LocalTime.of(13, 0)) && end.equals(LocalTime.of(18, 0));
-
-        if (!isValidAM && !isValidPM) {
-            throw new WebApplicationException("Time must be 08:00–12:00 or 13:00–18:00", Response.Status.BAD_REQUEST);
-        }
-    }
-
-    public List<ReservationEntity> getAllReservations() {
-        return reservationRepository.listAll();
     }
 }
