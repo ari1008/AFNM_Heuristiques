@@ -224,5 +224,6 @@ export class SlotDetailComponent implements OnInit {
     localStorage.removeItem('userId');
     localStorage.removeItem('session');
     window.location.href = '/login';
+    this.router.navigate(['/login']);
   }
 }
