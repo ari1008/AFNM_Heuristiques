@@ -5,7 +5,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.esgi.reservation.ReservationService;
-import org.esgi.reservation.resources.in.ReservationRequest;
+import org.esgi.reservation.resources.dto.in.ReservationRequest;
 
 @Path("/reservations")
 @Consumes(MediaType.APPLICATION_JSON)
