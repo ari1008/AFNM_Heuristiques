@@ -2,6 +2,7 @@ package org.esgi.auth;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.esgi.users.UserEntity;
@@ -17,6 +18,7 @@ public class AuthService {
     @Inject
     UserRepository userRepository;
 
+    @Transactional
     public UserEntity login(String email, String password) {
         Optional<UserEntity> userOpt = userRepository.find("email", email.toLowerCase()).firstResultOptional();
         if (userOpt.isEmpty() || !PasswordHasher.verify(password, userOpt.get().passwordHash)) {
@@ -29,6 +31,7 @@ public class AuthService {
         return user;
     }
 
+    @Transactional
     public void logout(String tokenHeader) {
         if (tokenHeader == null || !tokenHeader.startsWith("Token ")) {
             throw new WebApplicationException("Invalid token", Response.Status.BAD_REQUEST);

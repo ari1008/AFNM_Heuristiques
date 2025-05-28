@@ -14,13 +14,13 @@ public class ParkingSlotEntity extends PanacheEntityBase {
     public UUID id;
 
     @Column(nullable = false, unique = true)
-    public String code; // e.g., A01, B07, F10
+    public String code;
 
     @Column(nullable = false)
-    public String row;  // A to F
+    public String row;
 
     @Column(nullable = false)
-    public int number;  // 1 to 10
+    public int number;
 
     @Column(nullable = false)
     public boolean hasCharger;
