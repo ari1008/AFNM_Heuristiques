@@ -10,6 +10,8 @@ import org.esgi.users.Role;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserService;
 import org.esgi.users.resources.dto.in.UserUpdateRequest;
+import org.esgi.users.resources.dto.out.UserResponse;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +24,7 @@ public class AdminUserResource {
     UserService userService;
 
     @GET
-    public List<UserEntity> getAll(@Context ContainerRequestContext context) {
+    public List<UserResponse> getAll(@Context ContainerRequestContext context) {
         checkAdmin(context);
         return userService.getAll();
     }
