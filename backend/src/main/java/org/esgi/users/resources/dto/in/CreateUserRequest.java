@@ -1,4 +1,4 @@
-package org.esgi.users.resources.in;
+package org.esgi.users.resources.dto.in;
 
 public record CreateUserRequest(
         String firstname,

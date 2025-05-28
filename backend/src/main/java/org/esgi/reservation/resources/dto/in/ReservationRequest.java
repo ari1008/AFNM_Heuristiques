@@ -1,4 +1,4 @@
-package org.esgi.reservation.resources.in;
+package org.esgi.reservation.resources.dto.in;
 
 import java.time.LocalDate;
 import java.util.List;

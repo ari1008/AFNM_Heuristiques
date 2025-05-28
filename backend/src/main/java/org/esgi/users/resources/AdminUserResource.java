@@ -9,8 +9,7 @@ import jakarta.ws.rs.core.Response;
 import org.esgi.users.Role;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserService;
-import org.esgi.users.resources.in.UserUpdateRequest;
-
+import org.esgi.users.resources.dto.in.UserUpdateRequest;
 import java.util.List;
 import java.util.UUID;
 
