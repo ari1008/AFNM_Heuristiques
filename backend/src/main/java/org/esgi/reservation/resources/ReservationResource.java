@@ -4,11 +4,8 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.esgi.reservation.ReservationEntity;
 import org.esgi.reservation.ReservationService;
 import org.esgi.reservation.resources.in.ReservationRequest;
-
-import java.util.List;
 
 @Path("/reservations")
 @Consumes(MediaType.APPLICATION_JSON)

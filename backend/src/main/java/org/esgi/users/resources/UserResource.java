@@ -9,8 +9,9 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserService;
-import org.esgi.users.resources.in.CreateUserRequest;
-import org.esgi.users.resources.out.UserResponse;
+import org.esgi.users.resources.dto.in.CreateUserRequest;
+import org.esgi.users.resources.dto.out.UserResponse;
+
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)

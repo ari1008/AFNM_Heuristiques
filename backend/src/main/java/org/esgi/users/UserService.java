@@ -5,9 +5,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
-import org.esgi.users.resources.UserResource;
-import org.esgi.users.resources.in.CreateUserRequest;
-import org.esgi.users.resources.in.UserUpdateRequest;
+import org.esgi.users.resources.dto.in.CreateUserRequest;
+import org.esgi.users.resources.dto.in.UserUpdateRequest;
 import org.esgi.utils.PasswordHasher;
 import org.jboss.logging.Logger;
 

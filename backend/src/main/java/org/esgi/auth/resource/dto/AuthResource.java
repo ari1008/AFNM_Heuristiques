@@ -1,10 +1,10 @@
-package org.esgi.auth;
+package org.esgi.auth.resource.dto;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.esgi.auth.dto.LoginRequest;
+import org.esgi.auth.AuthService;
 import org.esgi.users.Role;
 import org.esgi.users.UserEntity;
 
