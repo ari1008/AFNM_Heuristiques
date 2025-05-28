@@ -1,4 +1,4 @@
-package org.esgi.auth.dto;
+package org.esgi.auth.resource.dto;
 
 public class LoginRequest {
     public String email;
