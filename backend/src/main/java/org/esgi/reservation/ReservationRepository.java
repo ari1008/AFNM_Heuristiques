@@ -16,6 +16,17 @@ public class ReservationRepository implements PanacheRepository<ReservationEntit
         return find("id", id).firstResult();
     }
 
+    public boolean existsBySlotAndDateRange(UUID slotId, LocalDate startDate, LocalDate endDateInclusive) {
+        return getEntityManager()
+                .createQuery("SELECT COUNT(r) > 0 FROM ReservationEntity r " +
+                        "WHERE r.slot.id = :slotId " +
+                        "AND r.startDate <= :endDateInclusive AND r.endDate >= :startDate", Boolean.class)
+                .setParameter("slotId", slotId)
+                .setParameter("startDate", startDate)
+                .setParameter("endDateInclusive", endDateInclusive)
+                .getSingleResult();
+    }
+
     public ReservationEntity findReservationOfTheDay(UUID userId) {
         LocalDate today = LocalDate.now(ZoneId.of("Europe/Paris"));
         LocalDate dayStart = today;
