@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
-import {ReservationService} from '../mock/reservation.service';
 import {AuthService} from '../mock/auth.service';
 
 @Component({
@@ -21,7 +20,6 @@ export class ParkingLotComponent implements OnInit {
   isLoggedIn: boolean = true;
 
   constructor(
-    private reservationService: ReservationService,
     private authService: AuthService
   ) {
   }
@@ -41,19 +39,11 @@ export class ParkingLotComponent implements OnInit {
 
   isSlotReservedToday(slotId: string): boolean {
     const today = new Date().toISOString().split('T')[0];
-    const reservations = this.reservationService.getReservationsForSlot(slotId);
-    return reservations.some(r =>
-      r.startDate <= today && r.endDate >= today && r.status === 'active'
-    );
+    return false
   }
 
   isElectricRow(row: string): boolean {
     return row === 'A' || row === 'F';
   }
 
-  private removeAll() {
-    localStorage.removeItem('session');
-    localStorage.removeItem('email');
-    localStorage.removeItem('role');
-  }
 }
