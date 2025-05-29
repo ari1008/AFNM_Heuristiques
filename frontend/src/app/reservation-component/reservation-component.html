@@ -1,9 +1,6 @@
 <h2>Réserver une place</h2>
 
 <form [formGroup]="reservationForm" (ngSubmit)="submit()">
-  <label for="slotId">ID du créneau</label>
-  <input matInput formControlName="slotId" placeholder="Ex : A12" />
-
   <label for="startDate">Date de début</label>
   <input matInput type="date" formControlName="startDate" />
 

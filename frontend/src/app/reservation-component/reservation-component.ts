@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 
 import { ReservationService } from '../service/reservation.service';
-import {ROLES} from '../model/user.model';
+import { ROLES } from '../model/user.model';
+import {ParkingService} from '../service/parking.service';
 
 @Component({
   selector: 'app-user-reservation',
@@ -28,25 +29,54 @@ import {ROLES} from '../model/user.model';
 export class ReservationComponent implements OnInit {
   reservationForm: FormGroup;
   error: string | null = null;
+  slotId: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationService,
-    private router: Router
+    private parkingService: ParkingService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.reservationForm = this.fb.group({
-      slotId: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const code = params.get('id');
+
+      if (code) {
+        this.parkingService.getByCode(code).subscribe({
+          next: (slot) => {
+            if (!slot) {
+              this.error = 'La place sélectionnée est introuvable.';
+              return;
+            }
+            this.slotId = slot.id;
+          },
+          error: (err) => {
+            this.error = err.message;
+          }
+        });
+      } else {
+        this.error = 'Aucun identifiant de place fourni dans l’URL.';
+      }
+    });
+  }
+
 
   submit(): void {
     this.error = null;
 
-    const { slotId, startDate, endDate } = this.reservationForm.value;
+    if (this.reservationForm.invalid || !this.slotId) {
+      this.error = 'Veuillez remplir tous les champs requis.';
+      return;
+    }
+
+    const { startDate, endDate } = this.reservationForm.value;
     const userId = localStorage.getItem('id');
     const role = (localStorage.getItem('role') ?? '').toUpperCase();
 
@@ -74,7 +104,7 @@ export class ReservationComponent implements OnInit {
       return;
     }
 
-    this.reservationService.createReservation(userId, [startDate, endDate], slotId).subscribe({
+    this.reservationService.createReservation(userId, [startDate, endDate], this.slotId).subscribe({
       next: () => this.router.navigate(['/']),
       error: (err) => this.error = err.message
     });

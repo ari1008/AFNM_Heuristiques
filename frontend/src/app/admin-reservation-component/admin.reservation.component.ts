@@ -11,6 +11,8 @@ import { ReservationResponse } from '../model/reservation.model';
 import { UserForSecretary } from '../model/register.model';
 import { ReservationSecretaryService } from '../service/reservation.secretary.service';
 import { UserService } from '../service/user.service';
+import { ParkingService } from '../service/parking.service';
+import { Slot } from '../model/parking.model';
 
 @Component({
   selector: 'app-reservation-secretary',
@@ -32,13 +34,15 @@ export class AdminReservationComponent implements OnInit {
   reservationForm: FormGroup;
   users: UserForSecretary[] = [];
   reservations: ReservationResponse[] = [];
+  slots: Slot[] = [];
   editingId: string | null = null;
   displayedColumns: string[] = ['userId', 'slotId', 'start', 'end', 'actions'];
 
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationSecretaryService,
-    private userService: UserService
+    private userService: UserService,
+    private parkingService: ParkingService
   ) {
     this.reservationForm = this.fb.group({
       userId: ['', Validators.required],
@@ -51,6 +55,7 @@ export class AdminReservationComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
     this.loadReservations();
+    this.loadSlots();
   }
 
   loadUsers(): void {
@@ -64,6 +69,13 @@ export class AdminReservationComponent implements OnInit {
     this.reservationService.getAllReservations().subscribe({
       next: (reservations) => this.reservations = reservations,
       error: (err) => console.error('Erreur lors du chargement des réservations', err)
+    });
+  }
+
+  loadSlots(): void {
+    this.parkingService.getAll().subscribe({
+      next: (slots) => this.slots = slots,
+      error: (err) => console.error('Erreur lors du chargement des slots', err)
     });
   }
 
@@ -84,7 +96,10 @@ export class AdminReservationComponent implements OnInit {
 
   updateReservation(reservation: ReservationResponse): void {
     this.reservationService.updateReservation(reservation.id, reservation.startDate, reservation.endDate).subscribe({
-      next: () => this.editingId = null,
+      next: () => {
+        this.editingId = null
+        this.parkingService.refreshCache()
+      },
       error: (err) => console.error('Erreur lors de la mise à jour', err)
     });
   }
@@ -99,6 +114,11 @@ export class AdminReservationComponent implements OnInit {
   getUserEmail(userId: string): string {
     const user = this.users.find(u => u.id === userId);
     return user ? `${user.email}` : 'Inconnu';
+  }
+
+  getSlotCode(slotId: string): string {
+    const slot = this.slots.find(s => s.id === slotId);
+    return slot ? slot.code : 'Inconnu';
   }
 
   formatDate(date: string): string {
