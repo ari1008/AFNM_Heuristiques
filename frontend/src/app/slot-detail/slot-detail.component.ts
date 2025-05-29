@@ -190,11 +190,6 @@ export class SlotDetailComponent implements OnInit {
     });
   }
 
-  navigateToHome(): void {
-    this.router.navigate(['/'])
-      .catch(err => console.error('Erreur de navigation vers l\'accueil:', err));
-  }
-
   navigateToLogin(): void {
     this.router.navigate(['/login'])
       .catch(err => console.error('Erreur de navigation vers la page de connexion:', err));
@@ -216,14 +211,5 @@ export class SlotDetailComponent implements OnInit {
     }
 
     return formattedSlotId === this.slotId;
-  }
-
-  logout(): void {
-    localStorage.removeItem('email');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('session');
-    window.location.href = '/login';
-    this.router.navigate(['/login']);
   }
 }
