@@ -65,7 +65,7 @@ export class AuthService {
         },
         error: () => {
           this.clearSession();
-          observer.next();  // << ajouter ceci pour s'assurer que le subscribe se déclenche toujours
+          observer.next();
           observer.complete();
         }
       });
