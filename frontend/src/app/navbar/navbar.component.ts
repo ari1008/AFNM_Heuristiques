@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService, AuthUser } from '../mock/auth.service';
+import { AuthService, AuthUser } from '../auth-component/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -20,19 +20,15 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser.subscribe((user: AuthUser | null) => {
       this.isLoggedIn = !!user;
-      if (user) {
-        this.userEmail = user.email;
-        this.role = user.role;
-      } else {
-        this.userEmail = '';
-        this.role = '';
-      }
+      this.userEmail = user?.email || '';
+      this.role = user?.role || '';
     });
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 
   redirectToLogin(): void {

@@ -1,4 +1,3 @@
-
 import { provideRouter } from '@angular/router';
 
 import {ParkingLotComponent} from './parking-lot/parking-lot.component';
@@ -21,7 +20,7 @@ export const appConfig = {
       { path: 'admin/reservations', component: ReservationAdminComponent, canActivate: [canActivateSecretaryOnly] },
       { path: 'admin/users', component: UserManagementComponent, canActivate: [canActivateSecretaryOnly] },
       { path: 'login', component: LoginComponent },
-      { path: '', component: ParkingLotComponent},
+      { path: '', component: ParkingLotComponent, canActivate: [authGuard] },
       { path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard] },
 
       {
