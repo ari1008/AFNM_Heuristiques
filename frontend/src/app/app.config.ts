@@ -9,6 +9,7 @@ import {provideHttpClient} from '@angular/common/http';
 import {AdminUserComponent} from './admin-user-component/admin.user.component';
 import {AdminReservationComponent} from './admin-reservation-component/admin.reservation.component';
 import {ReservationComponent} from './reservation-component/reservation-component';
+import {CheckinComponent} from './checkin-component/checkin.component';
 
 export const appConfig = {
   providers: [
@@ -20,6 +21,7 @@ export const appConfig = {
       {path: '', component: ParkingLotComponent, canActivate: [authGuard]},
       {path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard]},
       {path: 'reservation', component: ReservationComponent, canActivate: [authGuard]},
+      {path: 'checkin', component: CheckinComponent, canActivate: [authGuard]}
     ])
   ],
 
