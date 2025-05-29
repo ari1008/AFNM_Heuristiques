@@ -36,6 +36,7 @@ public class ReservationService {
     @Inject
     ReservationMapper reservationMapper;
 
+    @Transactional
     public void createReservation(ReservationRequest request) {
         UserEntity user = userRepository.findById(request.userId);
         ParkingSlotEntity slot = parkingSlotRepository.findById(request.slotId);
@@ -45,6 +46,11 @@ public class ReservationService {
 
         ReservationEntity reservation = reservationMapper.fromRequest(request, user, slot);
         reservationRepository.persist(reservation);
+    }
+
+    public List<ReservationResponse> getAllReservationsBySlotId(UUID slotId) {
+        List<ReservationEntity> reservations = reservationRepository.findAllBySlotId(slotId);
+        return reservationMapper.toResponseList(reservations);
     }
 
     public void updateReservation(UUID id, ReservationUpdateRequest update) {
