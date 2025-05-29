@@ -29,7 +29,7 @@ public class UserService {
     UserMapper userMapper;
 
     @Transactional
-    public UserEntity create(CreateUserRequest createUserRequest) {
+    public UserResponse create(CreateUserRequest createUserRequest) {
         if (UserEntity.emailExists(createUserRequest.email())) {
             throw new IllegalArgumentException("Email already in use");
         }
@@ -41,7 +41,7 @@ public class UserService {
         UserEntity user = mapper.fromCreateRequest(createUserRequest, hashed);
         repo.persist(user);
         log.infov("User {0} created (id={1})", user.email, user.id);
-        return user;
+        return mapper.toResponse(user);
     }
 
 
