@@ -7,10 +7,13 @@ interface LoginRequest {
   password: string;
 }
 
-interface LoginResponse {
-  sessionToken: string;
+export interface AuthUser {
   email: string;
   role: string;
+}
+
+interface LoginResponse extends AuthUser {
+  sessionToken: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -19,6 +22,9 @@ export class AuthService {
 
   private _isLoggedIn = new BehaviorSubject<boolean>(!!localStorage.getItem('session'));
   public isLoggedIn$ = this._isLoggedIn.asObservable();
+
+  private userSubject = new BehaviorSubject<AuthUser | null>(this.getUserFromStorage());
+  public currentUser = this.userSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -30,7 +36,11 @@ export class AuthService {
           localStorage.setItem('session', res.sessionToken);
           localStorage.setItem('email', res.email);
           localStorage.setItem('role', res.role);
+
+          const user: AuthUser = { email: res.email, role: res.role };
+          this.userSubject.next(user);
           this._isLoggedIn.next(true);
+
           observer.next(res);
           observer.complete();
         },
@@ -62,8 +72,18 @@ export class AuthService {
     });
   }
 
-  clearSession(): void {
+  private clearSession(): void {
     localStorage.clear();
     this._isLoggedIn.next(false);
+    this.userSubject.next(null);
+  }
+
+  private getUserFromStorage(): AuthUser | null {
+    const email = localStorage.getItem('email');
+    const role = localStorage.getItem('role');
+    if (email && role) {
+      return { email, role };
+    }
+    return null;
   }
 }

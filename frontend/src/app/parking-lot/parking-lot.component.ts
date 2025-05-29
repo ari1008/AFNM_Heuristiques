@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Router, RouterModule} from '@angular/router';
+import {RouterModule} from '@angular/router';
 import {ReservationService} from '../mock/reservation.service';
 import {AuthService} from '../mock/auth.service';
 
@@ -22,11 +22,9 @@ export class ParkingLotComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
-    private router: Router,
     private authService: AuthService
   ) {
   }
-
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((logged) => {
@@ -34,16 +32,6 @@ export class ParkingLotComponent implements OnInit {
       this.userEmail = localStorage.getItem('email');
       this.role = localStorage.getItem('role');
     });
-  }
-
-  logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/']);
-    });
-  }
-
-  createAccount(): void {
-    this.router.navigate(['/register']);
   }
 
   getSlot(row: string, col: number) {
@@ -59,15 +47,9 @@ export class ParkingLotComponent implements OnInit {
     );
   }
 
-
   isElectricRow(row: string): boolean {
     return row === 'A' || row === 'F';
   }
-
-  redirectToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
 
   private removeAll() {
     localStorage.removeItem('session');

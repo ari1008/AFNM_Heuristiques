@@ -1,3 +1,15 @@
 <nav class="navbar">
-  <a routerLink="/" routerLinkActive="active" (click)="debug()">Accueil</a>
+  <div class="left">
+    <a routerLink="/" routerLinkActive="active">Accueil</a>
+  </div>
+
+  <div class="center" *ngIf="isLoggedIn">
+    {{ userEmail }} | {{ role }}
+  </div>
+
+  <div class="right">
+    <a *ngIf="!isLoggedIn" (click)="redirectToLogin()" routerLinkActive="active">Se connecter</a>
+    <a *ngIf="!isLoggedIn" (click)="createAccount()" routerLinkActive="active">Créer un compte</a>
+    <button *ngIf="isLoggedIn" (click)="logout()">Se déconnecter</button>
+  </div>
 </nav>
