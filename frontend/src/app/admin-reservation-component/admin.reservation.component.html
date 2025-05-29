@@ -1,0 +1,65 @@
+<h2>Créer une réservation</h2>
+<form [formGroup]="reservationForm" (ngSubmit)="createReservation()">
+  <label for="userId">Utilisateur</label>
+  <select formControlName="userId">
+    <option value="" disabled selected>Sélectionnez un utilisateur</option>
+    <option *ngFor="let user of users" [value]="user.id">
+      {{ user.email }} — {{ user.firstname }} {{ user.lastname }}
+    </option>
+  </select>
+
+  <label for="slotId">ID créneau</label>
+  <input formControlName="slotId" placeholder="ID créneau">
+
+  <label for="startDate">Début</label>
+  <input formControlName="startDate" type="date">
+
+  <label for="endDate">Fin</label>
+  <input formControlName="endDate" type="date">
+
+  <button type="submit">Créer</button>
+</form>
+
+<h2>Liste des réservations</h2>
+<table mat-table [dataSource]="reservations" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="userId">
+    <th mat-header-cell *matHeaderCellDef>Utilisateur</th>
+    <td mat-cell *matCellDef="let res">
+      {{ getUserEmail(res.userId) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="slotId">
+    <th mat-header-cell *matHeaderCellDef>Créneau</th>
+    <td mat-cell *matCellDef="let res">{{ res.slotId }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="start">
+    <th mat-header-cell *matHeaderCellDef>Début</th>
+    <td mat-cell *matCellDef="let res">
+      <input [(ngModel)]="res.startDate" *ngIf="editingId === res.id" type="date" name="start-{{res.id}}" />
+      <span *ngIf="editingId !== res.id">{{ formatDate(res.startDate) }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="end">
+    <th mat-header-cell *matHeaderCellDef>Fin</th>
+    <td mat-cell *matCellDef="let res">
+      <input [(ngModel)]="res.endDate" *ngIf="editingId === res.id" type="date" name="end-{{res.id}}" />
+      <span *ngIf="editingId !== res.id">{{ formatDate(res.endDate) }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let res">
+      <button *ngIf="editingId !== res.id" (click)="enableEdit(res)">Modifier</button>
+      <button *ngIf="editingId === res.id" (click)="updateReservation(res)">Sauvegarder</button>
+      <button (click)="deleteReservation(res.id)">Supprimer</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

@@ -1,16 +1,19 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from './auth.service';
-
+import { AuthService } from '../service/auth.service';
+import { map } from 'rxjs/operators';
 
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  if (!auth.isLoggedIn()) {
-    console.log("Pas connecté, redirection vers /login");
-    return router.parseUrl('/login');
-  }
-
-  return true;
+  return auth.currentUser.pipe(
+    map(user => {
+      if (!user) {
+        console.log('Redirection vers /login');
+        return router.parseUrl('/login');
+      }
+      return true;
+    })
+  );
 };

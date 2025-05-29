@@ -1,7 +1,9 @@
 package org.esgi.reservation;
 
+import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import org.esgi.parking.ParkingSlotEntity;
@@ -14,6 +16,8 @@ import org.esgi.users.UserEntity;
 import org.esgi.users.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +36,7 @@ public class ReservationService {
     @Inject
     ReservationMapper reservationMapper;
 
+    @Transactional
     public void createReservation(ReservationRequest request) {
         UserEntity user = userRepository.findById(request.userId);
         ParkingSlotEntity slot = parkingSlotRepository.findById(request.slotId);
@@ -41,6 +46,11 @@ public class ReservationService {
 
         ReservationEntity reservation = reservationMapper.fromRequest(request, user, slot);
         reservationRepository.persist(reservation);
+    }
+
+    public List<ReservationResponse> getAllReservationsBySlotId(UUID slotId) {
+        List<ReservationEntity> reservations = reservationRepository.findAllBySlotId(slotId);
+        return reservationMapper.toResponseList(reservations);
     }
 
     public void updateReservation(UUID id, ReservationUpdateRequest update) {
@@ -63,12 +73,43 @@ public class ReservationService {
         return reservationMapper.toResponseList(reservationRepository.listAll());
     }
 
+    @Transactional
     public void deleteReservation(UUID id) {
         ReservationEntity res = reservationRepository.findById(id);
         if (res == null) {
             throw new WebApplicationException("Reservation not found", Response.Status.NOT_FOUND);
         }
         reservationRepository.delete(res);
+    }
+
+    @Transactional
+    public void checkIn(UUID userId, UUID slotId) {
+        ReservationEntity res = reservationRepository.findReservationOfTheDay(userId);
+        if (!res.slot.id.equals(slotId)) {
+            throw new IllegalArgumentException("Slot does not match today's reservation");
+        }
+        res.checkedInAt = LocalDateTime.now();
+    }
+
+    @Transactional
+    @Scheduled(cron = "0 0 11 * * ?", timeZone = "Europe/Paris")
+    public void releaseUnattendedReservations() {
+        LocalDate today = LocalDate.now(ZoneId.of("Europe/Paris"));
+        LocalDateTime cutoff = today.atTime(11, 0);
+        LocalDate nextDayStart = today.plusDays(1);
+
+        List<ReservationEntity> unattended = reservationRepository.findUnattendedReservations();
+        for (ReservationEntity r : unattended) {
+            if (r.endDate.isAfter(nextDayStart)) {
+                ReservationEntity tail = new ReservationEntity();
+                tail.slot = r.slot;
+                tail.userId = r.userId;
+                tail.startDate = nextDayStart;
+                tail.endDate = r.endDate;
+                reservationRepository.persist(tail);
+            }
+            r.endDate = cutoff.toLocalDate();
+        }
     }
 
     private void validateReservationDates(List<LocalDate> dates, UserEntity user) {

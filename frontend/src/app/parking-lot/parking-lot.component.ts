@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Router, RouterModule} from '@angular/router';
-import {ReservationService} from '../mock/reservation.service';
-import {AuthService} from '../mock/auth.service';
+import {RouterModule} from '@angular/router';
+import {AuthService} from '../service/auth.service';
 
 @Component({
   selector: 'app-parking-lot',
@@ -21,12 +20,9 @@ export class ParkingLotComponent implements OnInit {
   isLoggedIn: boolean = true;
 
   constructor(
-    private reservationService: ReservationService,
-    private router: Router,
     private authService: AuthService
   ) {
   }
-
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe((logged) => {
@@ -36,16 +32,6 @@ export class ParkingLotComponent implements OnInit {
     });
   }
 
-  logout(): void {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/']);
-    });
-  }
-
-  createAccount(): void {
-    this.router.navigate(['/register']);
-  }
-
   getSlot(row: string, col: number) {
     const id = `${row}${col.toString().padStart(2, '0')}`;
     return {id, occupied: this.isSlotReservedToday(id)};
@@ -53,25 +39,11 @@ export class ParkingLotComponent implements OnInit {
 
   isSlotReservedToday(slotId: string): boolean {
     const today = new Date().toISOString().split('T')[0];
-    const reservations = this.reservationService.getReservationsForSlot(slotId);
-    return reservations.some(r =>
-      r.startDate <= today && r.endDate >= today && r.status === 'active'
-    );
+    return false
   }
-
 
   isElectricRow(row: string): boolean {
     return row === 'A' || row === 'F';
   }
 
-  redirectToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
-
-  private removeAll() {
-    localStorage.removeItem('session');
-    localStorage.removeItem('email');
-    localStorage.removeItem('role');
-  }
 }

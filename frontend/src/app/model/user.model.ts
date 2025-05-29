@@ -1,5 +1,11 @@
-export interface User {
-  email: string;
-  password: string;
-  role: 'user' | 'admin' | 'secretary' | 'manager';
-}
+export const ROLES = {
+  MANAGER: {
+    name: "MANAGER",
+  },
+  EMPLOYEE: {
+    name: "EMPLOYEE",
+  },
+  SECRETARY: {
+    name: "SECRETARY",
+  },
+} as const;

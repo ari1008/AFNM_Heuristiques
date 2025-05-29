@@ -1,5 +1,13 @@
-<h2>Check-in pour la place {{ slotId }}</h2>
+<h2>Check-In Parking</h2>
 
-<p>{{ message }}</p>
+<form [formGroup]="checkinForm" (ngSubmit)="submit()">
+  <label for="slotId">ID du créneau</label>
+  <input matInput formControlName="slotId" placeholder="Ex : A12" />
 
-<button *ngIf="reservation" (click)="checkIn()">Je suis arrivé</button>
+  <button mat-raised-button color="primary" type="submit" [disabled]="checkinForm.invalid">
+    Valider le Check-In
+  </button>
+</form>
+
+<div *ngIf="message" style="color: green; margin-top: 12px;">{{ message }}</div>
+<div *ngIf="error" style="color: red; margin-top: 12px;">{{ error }}</div>

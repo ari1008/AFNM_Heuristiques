@@ -23,7 +23,7 @@ public class ParkingSlotEntity extends PanacheEntityBase {
     public int number;
 
     @Column(nullable = false)
-    public boolean hasCharger;
+    public boolean has_charger;
 
     @PrePersist
     public void assignId() {

@@ -23,16 +23,17 @@ public class UserEntity extends PanacheEntityBase {
     @Column(nullable = false, unique = true)
     public String email;
 
-    @Column(nullable = false)
+    @Column(name = "password_hash", nullable = false)
     public String passwordHash;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public Role role;
 
-    @Column
+    @Column(name = "session_token", nullable = false, unique = true)
     public String sessionToken;
 
-    @Column(nullable = false)
+    @Column(name= "is_hybrid_or_electric",nullable = false)
     public boolean isHybridOrElectric;
 
     public LocalDateTime createdAt = LocalDateTime.now();

@@ -1,53 +1,59 @@
-import {Component, OnInit} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {ReservationService, Reservation} from '../mock/reservation.service';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
+
+import { ReservationService } from '../service/reservation.service';
 
 @Component({
-  standalone: true,
   selector: 'app-checkin',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './checkin.component.html',
-  styleUrls: []
+  styleUrls: ['./checkin.component.css']
 })
-export class CheckinComponent implements OnInit {
-  slotId: string | null = null;
-  userEmail: string = '';
-  reservation: Reservation | null = null;
-  message: string = '';
+export class CheckinComponent {
+  checkinForm: FormGroup;
+  message: string | null = null;
+  error: string | null = null;
 
   constructor(
-    private route: ActivatedRoute,
-    private reservationService: ReservationService
-  ) {}
-
-  ngOnInit(): void {
-    this.slotId = this.route.snapshot.paramMap.get('slotId');
-    this.userEmail = localStorage.getItem('email') || '';
-    this.findTodayReservation();
+    private fb: FormBuilder,
+    private reservationService: ReservationService,
+    private router: Router
+  ) {
+    this.checkinForm = this.fb.group({
+      slotId: ['', Validators.required]
+    });
   }
 
-  findTodayReservation(): void {
-    const today = new Date().toISOString().split('T')[0];
-    const reservations = this.reservationService.getReservationsForSlot(this.slotId!);
-    const found = reservations.find(r =>
-      r.startDate === today &&
-      r.reservedBy === this.userEmail &&
-      r.status === 'active'
-    );
-    if (found) {
-      this.reservation = found;
-      this.message = `Réservation trouvée pour aujourd'hui.`;
-    } else {
-      this.message = `Aucune réservation trouvée pour aujourd'hui.`;
-    }
-  }
+  submit(): void {
+    this.message = null;
+    this.error = null;
 
-  checkIn(): void {
-    if (this.reservation) {
-      this.reservation.checkedIn = true;
-      this.message = '✅ Check-in confirmé !';
+    const slotId = this.checkinForm.value.slotId;
+    const userId = localStorage.getItem('id');
+
+    if (!userId) {
+      this.error = 'Utilisateur non authentifié.';
+      return;
     }
+
+    this.reservationService.checkIn(userId, slotId).subscribe({
+      next: () => {
+        this.message = 'Check-in effectué avec succès !';
+        this.checkinForm.reset();
+        setTimeout(() => this.router.navigate(['/']), 1500);
+      },
+      error: (err) => this.error = err.message
+    });
   }
 }
-

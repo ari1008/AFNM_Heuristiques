@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.esgi.parking.ParkingSlotEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -29,6 +30,8 @@ public class ReservationEntity extends PanacheEntityBase {
 
     @Column(nullable = false)
     public LocalDate endDate;
+    @Column(name = "checked_in_at")
+    public LocalDateTime checkedInAt;
 
     @PrePersist
     public void generateId() { if (id == null) id = UUID.randomUUID(); }

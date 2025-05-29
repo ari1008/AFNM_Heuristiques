@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response;
 import org.esgi.users.Role;
 import org.esgi.users.UserEntity;
 import org.esgi.users.UserService;
+import org.esgi.users.resources.dto.in.CreateUserRequest;
 import org.esgi.users.resources.dto.in.UserUpdateRequest;
 import org.esgi.users.resources.dto.out.UserResponse;
 
@@ -49,6 +50,17 @@ public class AdminUserResource {
         UserEntity current = (UserEntity) context.getProperty("currentUser");
         if (current == null || current.role != Role.SECRETARY) {
             throw new ForbiddenException("Access reserved to administrators");
+        }
+    }
+    @POST
+    public Response createUser(CreateUserRequest req, @Context ContainerRequestContext context) {
+        try {
+            checkAdmin(context);
+            return Response.status(Response.Status.CREATED).entity(userService.create(req)).build();
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(ex.getMessage())
+                    .build();
         }
     }
 }

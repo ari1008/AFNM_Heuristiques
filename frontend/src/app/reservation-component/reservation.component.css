@@ -1,0 +1,58 @@
+form {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+label {
+  font-weight: 600;
+  color: #444;
+}
+
+input[type="text"],
+input[type="date"],
+mat-form-field {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+}
+
+button {
+  margin-top: 8px;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #115293;
+}
+
+button[disabled] {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+div[style*="color: red"] {
+  font-size: 14px;
+  font-weight: 500;
+}
