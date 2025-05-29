@@ -30,7 +30,7 @@ export class ReservationService {
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Token ${token}`
     });
   }
 

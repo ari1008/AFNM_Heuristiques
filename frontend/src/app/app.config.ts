@@ -8,6 +8,7 @@ import {canActivateSecretaryOnly} from './auth-component/secretary.guard';
 import {provideHttpClient} from '@angular/common/http';
 import {AdminUserComponent} from './admin-user-component/admin.user.component';
 import {AdminReservationComponent} from './admin-reservation-component/admin.reservation.component';
+import {ReservationComponent} from './reservation-component/reservation-component';
 
 export const appConfig = {
   providers: [
@@ -18,6 +19,7 @@ export const appConfig = {
       {path: 'login', component: LoginComponent},
       {path: '', component: ParkingLotComponent, canActivate: [authGuard]},
       {path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard]},
+      {path: 'reservation', component: ReservationComponent, canActivate: [authGuard]},
     ])
   ],
 

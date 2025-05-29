@@ -1,10 +1,3 @@
-// Définir un type pour les rôles
-type Role = "MANAGER" | "EMPLOYEE" | "SECRETARY";
-
-interface RoleDetails {
-  name: string;        // Nom du rôle
-}
-
 export const ROLES = {
   MANAGER: {
     name: "MANAGER",
