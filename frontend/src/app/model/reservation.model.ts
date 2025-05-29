@@ -1,4 +1,4 @@
-export interface Reservation {
+export interface ReservationModel {
   slotId: {
     number: number;
     row: string;

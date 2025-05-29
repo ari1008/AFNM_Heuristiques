@@ -6,7 +6,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
-import {RegisterService} from '../mock/register.service';
+import {RegisterService} from '../service/register.service';
 import {UserForSecretary, UserUpdateRequest} from '../model/register.model';
 
 @Component({

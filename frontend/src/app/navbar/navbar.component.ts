@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService, AuthUser } from '../mock/auth.service';
+import { AuthService, AuthUser } from '../service/auth.service';
 import {ROLES} from '../model/user.model.two';
 
 @Component({

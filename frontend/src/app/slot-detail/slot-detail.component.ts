@@ -10,8 +10,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {ReservationServiceTwo} from '../mock/reservation.service.two';
-import {Reservation} from '../mock/Reservation';
+import {ReservationServiceTwo} from '../service/reservation.service.two';
+import {ReservationModel} from '../model/reservation.model';
 
 
 @Component({
@@ -47,9 +47,7 @@ export class SlotDetailComponent implements OnInit {
     {value: 'AM', label: 'Matin (8h00 - 12h00)'},
     {value: 'PM', label: 'Après-midi (13h00 - 18h00)'}
   ];
-
-  // Utiliser l'interface Reservation de votre service
-  apiReservations: Reservation[] = [];
+  apiReservations: ReservationModel[] = [];
   errorMessage: string = '';
   successMessage: string = '';
   isLoading: boolean = false;
