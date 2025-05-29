@@ -73,6 +73,7 @@ public class ReservationService {
         return reservationMapper.toResponseList(reservationRepository.listAll());
     }
 
+    @Transactional
     public void deleteReservation(UUID id) {
         ReservationEntity res = reservationRepository.findById(id);
         if (res == null) {

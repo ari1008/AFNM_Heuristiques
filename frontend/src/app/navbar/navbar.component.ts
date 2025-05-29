@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, AuthUser } from '../service/auth.service';
-import {ROLES} from '../model/user.model.two';
+import {ROLES} from '../model/user.model';
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +15,7 @@ export class NavbarComponent implements OnInit {
   isLoggedIn = false;
   userEmail = '';
   role = '';
-  isSecretary = false; // Initialisé à false
+  isSecretary = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -24,8 +24,6 @@ export class NavbarComponent implements OnInit {
       this.isLoggedIn = !!user;
       this.userEmail = user?.email || '';
       this.role = user?.role || '';
-
-      // Mettre à jour isSecretary à chaque changement d'utilisateur
       this.isSecretary = this.role === ROLES.SECRETARY.name;
       console.log('isLoggedIn:', this.isLoggedIn);
       console.log('isSecretary:', this.isSecretary);
@@ -44,5 +42,9 @@ export class NavbarComponent implements OnInit {
 
   managementUser(): void {
     this.router.navigate(['/admin/users']);
+  }
+
+  managementReservation(): void {
+    this.router.navigate(['/admin/reservations'])
   }
 }

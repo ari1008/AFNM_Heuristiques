@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import {ROLES} from '../model/user.model.two';
+import {ROLES} from '../model/user.model';
 
 export const canActivateSecretaryOnly: CanActivateFn = () => {
   const role = localStorage.getItem('role');
