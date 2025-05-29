@@ -37,7 +37,8 @@ public class UserMapper {
                 user.lastname,
                 user.email,
                 user.role.name(),
-                user.isHybridOrElectric
+                user.isHybridOrElectric,
+                user.sessionToken
         );
     }
     public List<UserResponse> toResponses(List<UserEntity> users) {

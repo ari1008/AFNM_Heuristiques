@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {AuthService} from '../auth-component/auth.service';
+import {AuthService} from '../mock/auth.service';
 
 @Component({
   standalone: true,
@@ -23,9 +23,6 @@ export class LoginComponent {
   login() {
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
-        localStorage.setItem('session', res.sessionToken.toString());
-        localStorage.setItem('email', res.email);
-        localStorage.setItem('role', res.role);
         this.router.navigate(['/']);
       },
       error: (err) => {

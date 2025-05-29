@@ -1,4 +1,5 @@
 -- Crée un compte "secrétaire"
+-- email secretary@company.com
 -- > Mot de passe en clair : secretary123
 --   (haché avec BCrypt 12 rounds, même algo que dans PasswordHasher)
 

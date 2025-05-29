@@ -1,0 +1,56 @@
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+form input,
+form select {
+  padding: 0.5rem;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+form label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+mat-header-cell,
+mat-cell {
+  padding: 8px;
+  text-align: left;
+}
+
+mat-header-row {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+mat-row:hover {
+  background-color: #fafafa;
+}
+
+td input,
+td select {
+  width: 100%;
+  padding: 4px;
+}
+
+td button {
+  margin-right: 8px;
+}

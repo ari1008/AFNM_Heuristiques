@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {ReservationService} from '../mock/reservation.service';
-import {AuthService} from '../auth-component/auth.service';
+import {AuthService} from '../mock/auth.service';
 
 @Component({
   selector: 'app-parking-lot',

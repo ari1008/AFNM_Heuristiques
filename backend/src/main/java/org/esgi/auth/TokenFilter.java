@@ -29,7 +29,6 @@ public class TokenFilter implements ContainerRequestFilter {
 
 
         String authHeader = requestContext.getHeaderString("Authorization");
-        System.out.println("hello world 1");
         if (authHeader == null || !authHeader.startsWith("Token ")) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             return;
@@ -40,5 +39,6 @@ public class TokenFilter implements ContainerRequestFilter {
         if (userOpt.isEmpty()) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }
+        requestContext.setProperty("currentUser", userOpt.get());
     }
 }
