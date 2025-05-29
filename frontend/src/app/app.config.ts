@@ -10,6 +10,7 @@ import {ReservationAdminComponent} from './reservation-history/reservation-admin
 import {CheckinComponent} from './checkin-component/checkin.component';
 import {provideHttpClient} from '@angular/common/http';
 import {RegisterComponent} from './register/register.component';
+import {AdminUserComponent} from './admin-user-component/admin.user.component';
 
 export const appConfig = {
   providers: [
@@ -18,7 +19,7 @@ export const appConfig = {
       { path: 'register', component: RegisterComponent },
       { path: 'check-in/:slotId', component: CheckinComponent, canActivate: [authGuard] },
       { path: 'admin/reservations', component: ReservationAdminComponent, canActivate: [canActivateSecretaryOnly] },
-      { path: 'admin/users', component: UserManagementComponent, canActivate: [canActivateSecretaryOnly] },
+      { path: 'admin/users', component: AdminUserComponent, canActivate: [canActivateSecretaryOnly] },
       { path: 'login', component: LoginComponent },
       { path: '', component: ParkingLotComponent, canActivate: [authGuard] },
       { path: 'slot/:id', component: SlotDetailComponent, canActivate: [authGuard] },

@@ -7,9 +7,12 @@
     {{ userEmail }} | {{ role }}
   </div>
 
+  <div class="right" *ngIf="isLoggedIn && isSecretary">
+    <a (click)="managementUser()" routerLinkActive="active">Manager les utilisateurs</a>
+  </div>
+
   <div class="right">
     <a *ngIf="!isLoggedIn" (click)="redirectToLogin()" routerLinkActive="active">Se connecter</a>
-    <a *ngIf="!isLoggedIn" (click)="createAccount()" routerLinkActive="active">Créer un compte</a>
     <button *ngIf="isLoggedIn" (click)="logout()">Se déconnecter</button>
   </div>
 </nav>
