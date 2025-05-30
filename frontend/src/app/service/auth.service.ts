@@ -114,4 +114,10 @@ export class AuthService {
     }
     return null;
   }
+
+  public isLoggedIn(): boolean {
+    return !!localStorage.getItem('session');
+  }
+
+
 }

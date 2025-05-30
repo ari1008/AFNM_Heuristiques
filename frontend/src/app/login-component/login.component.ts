@@ -23,7 +23,7 @@ export class LoginComponent {
   login() {
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         if (err.status === 401) {
