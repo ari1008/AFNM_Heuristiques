@@ -8,7 +8,6 @@ import org.esgi.parking.ParkingSlotEntity;
 import org.esgi.parking.ParkingSlotService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Path("/slots")

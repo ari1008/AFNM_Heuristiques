@@ -18,7 +18,8 @@ import java.util.UUID;
 @ApplicationScoped
 public class UserService {
 
-    @Inject UserRepository repo;
+    @Inject
+    UserRepository repo;
     @Inject
     PasswordHasher hasher;
     @Inject
