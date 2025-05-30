@@ -50,12 +50,14 @@ public class ReservationMapper {
     }
 
     public ReservationResponse toResponse(ReservationEntity entity) {
+        boolean isCheckedIn = entity.checkedInAt != null;
         return new ReservationResponse(
                 entity.id.toString(),
                 entity.userId.toString(),
                 entity.slot.id.toString(),
                 entity.startDate,
-                entity.endDate
+                entity.endDate,
+                isCheckedIn
         );
     }
 

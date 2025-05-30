@@ -7,5 +7,6 @@ public record ReservationResponse(
         String userId,
         String slotId,
         LocalDate startDate,
-        LocalDate endDate
+        LocalDate endDate,
+        boolean isCheckedIn
 ) {}
