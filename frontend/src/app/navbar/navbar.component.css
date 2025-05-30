@@ -5,24 +5,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .left {
-  flex: 1;
   display: flex;
+  gap: 1rem;
   align-items: center;
 }
 
-.center {
-  flex: 1;
-  text-align: center;
-}
-
 .right {
-  flex: 1;
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1rem;
 }
 
 .navbar a {
@@ -30,7 +25,6 @@
   text-decoration: none;
 }
 
-.navbar a.active {
-  font-weight: bold;
-  text-decoration: underline;
+.user-info {
+  margin-right: 0.5rem;
 }

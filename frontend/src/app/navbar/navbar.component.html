@@ -1,21 +1,12 @@
 <nav class="navbar">
   <div class="left">
-    <a routerLink="/" routerLinkActive="active">Accueil</a>
-  </div>
-
-  <div class="center" *ngIf="isLoggedIn">
-    {{ userEmail }} | {{ role }}
-  </div>
-
-  <div class="right" *ngIf="isLoggedIn && isSecretary">
-    <a (click)="managementUser()" routerLinkActive="active">Manager les utilisateurs</a>
-  </div>
-
-  <div class="right" *ngIf="isLoggedIn && isSecretary">
-    <a (click)="managementReservation()" routerLinkActive="active">Manager les réservations</a>
+    <a routerLink="/home" routerLinkActive="active">Accueil</a>
+    <a *ngIf="isLoggedIn && isSecretary" (click)="managementUser()" routerLinkActive="active">Gérer les utilisateurs</a>
+    <a *ngIf="isLoggedIn && isSecretary" (click)="managementReservation()" routerLinkActive="active">Gérer les réservations</a>
   </div>
 
   <div class="right">
+    <span *ngIf="isLoggedIn" class="user-info">{{ userEmail }} | {{ role }}</span>
     <a *ngIf="!isLoggedIn" (click)="redirectToLogin()" routerLinkActive="active">Se connecter</a>
     <button *ngIf="isLoggedIn" (click)="logout()">Se déconnecter</button>
   </div>
