@@ -19,7 +19,7 @@
 
       <ng-template #showSlot>
         <a
-          [routerLink]="['/slot', getSlotId(row, col)]"
+          [routerLink]="['/reservation', getSlotId(row, col)]"
           class="slot free"
           [class.has-plug]="(isElectricSlot(row, col) | async)">
           {{ getSlotId(row, col) }}
