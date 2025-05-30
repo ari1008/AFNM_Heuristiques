@@ -36,6 +36,7 @@ public class ReservationService {
     @Inject
     ReservationMapper reservationMapper;
 
+    @Transactional
     public void createReservation(ReservationRequest request) {
         UserEntity user = userRepository.findById(request.userId);
         ParkingSlotEntity slot = parkingSlotRepository.findById(request.slotId);
@@ -43,8 +44,15 @@ public class ReservationService {
         validateReservationDates(request.dates, user);
         validateVehicleCompatibility(user, slot);
 
+        validateNonExistenceOfPreviousReservationTheseDays(request.dates, request.slotId);
+
         ReservationEntity reservation = reservationMapper.fromRequest(request, user, slot);
         reservationRepository.persist(reservation);
+    }
+
+    public List<ReservationResponse> getAllReservationsBySlotId(UUID slotId) {
+        List<ReservationEntity> reservations = reservationRepository.findAllBySlotId(slotId);
+        return reservationMapper.toResponseList(reservations);
     }
 
     public void updateReservation(UUID id, ReservationUpdateRequest update) {
@@ -67,6 +75,7 @@ public class ReservationService {
         return reservationMapper.toResponseList(reservationRepository.listAll());
     }
 
+    @Transactional
     public void deleteReservation(UUID id) {
         ReservationEntity res = reservationRepository.findById(id);
         if (res == null) {
@@ -124,6 +133,16 @@ public class ReservationService {
         LocalDate start = dates.get(0);
         LocalDate end = dates.get(dates.size() - 1);
         validateReservationRange(start, end);
+    }
+
+    private void validateNonExistenceOfPreviousReservationTheseDays(List<LocalDate> dates, UUID slotId) {
+        LocalDate startDate = dates.stream().min(LocalDate::compareTo).orElseThrow();
+        LocalDate endDate = dates.stream().max(LocalDate::compareTo).orElseThrow().plusDays(1);
+
+        boolean overlapExists = reservationRepository.existsBySlotAndDateRange(slotId, startDate, endDate);
+        if (overlapExists) {
+            throw new IllegalStateException("A reservation already exists for this slot on at least one of the requested dates.");
+        }
     }
 
     private void validateReservationRange(LocalDate start, LocalDate end) {

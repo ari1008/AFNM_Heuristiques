@@ -1,28 +1,85 @@
-import { Injectable } from '@angular/core';
-import { User } from '../model/user.model';
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {catchError, Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {CreateUserRequest, UserForSecretary, UserUpdateRequest} from '../model/register.model';
 
-@Injectable({ providedIn: 'root' })
+
+@Injectable({providedIn: 'root'})
 export class UserService {
-  private users: User[] = [
-    { email: 'alice@company.com', role: 'user' , password: 'admin'},
-    { email: 'bob@company.com', role: 'secretary', password: 'admin' },
-    { email: 'manager@company.com', role: 'manager', password: 'admin' }
-  ];
+  private apiUrl = 'http://localhost:8080/admin/users';
 
-  getUsers(): User[] {
-    return [...this.users];
+  constructor(private http: HttpClient) {
   }
 
-  addUser(user: User): void {
-    this.users.push(user);
+
+  getAll(): Observable<UserForSecretary[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<UserForSecretary[]>(this.apiUrl, {headers})
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching users:', error);
+          throw error;
+        })
+      );
   }
 
-  deleteUser(email: string): void {
-    this.users = this.users.filter(u => u.email !== email);
+  update(id: string, userData: Partial<UserUpdateRequest>): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.put(`${this.apiUrl}/${id}`, userData, {headers})
+      .pipe(
+        catchError(error => {
+          console.error('Error updating user:', error);
+          throw error;
+        })
+      );
   }
 
-  findUserByEmail(email: string): User | undefined {
-    console.log(this.users)
-    return this.users.find(u => u.email === email);
+  delete(id: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.apiUrl}/${id}`, {headers})
+      .pipe(
+        catchError(error => {
+          console.error('Error deleting user:', error);
+          throw error;
+        })
+      );
+  }
+
+
+  createUser(
+    firstname: string,
+    lastname: string,
+    email: string,
+    password: string,
+    role: string,
+    isElectricOrHybrid: boolean
+  ): Observable<CreateUserRequest> {
+    const headers = this.getAuthHeaders();
+    const createUserRequest: CreateUserRequest = {
+      firstname,
+      lastname,
+      email,
+      password,
+      role,
+      isElectricOrHybrid
+    };
+
+    return this.http.post<CreateUserRequest>(this.apiUrl, createUserRequest, {headers}).pipe(
+      map(response => response),
+
+
+    );
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('session');
+    if (!token) {
+      throw new Error('Token d\'authentification non trouvé');
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Token ${token}`
+    });
   }
 }

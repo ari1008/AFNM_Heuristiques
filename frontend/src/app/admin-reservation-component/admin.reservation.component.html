@@ -1,0 +1,78 @@
+<h2>Créer une réservation</h2>
+<form [formGroup]="reservationForm" (ngSubmit)="createReservation()">
+  <mat-form-field appearance="fill">
+    <mat-label>Utilisateur</mat-label>
+    <mat-select formControlName="userId">
+      <mat-option value="" disabled>Sélectionnez un utilisateur</mat-option>
+      <mat-option *ngFor="let user of users" [value]="user.id">
+        {{ user.email }} — {{ user.firstname }} {{ user.lastname }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Créneau</mat-label>
+    <mat-select formControlName="slotId">
+      <mat-option value="" disabled>Sélectionnez un créneau</mat-option>
+      <mat-option *ngFor="let slot of slots" [value]="slot.id">
+        {{ slot.code }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <label for="startDate">Début</label>
+  <input matInput formControlName="startDate" type="date" />
+
+  <label for="endDate">Fin</label>
+  <input matInput formControlName="endDate" type="date" />
+
+  <button mat-raised-button color="primary" type="submit">
+    Créer
+  </button>
+</form>
+
+<h2>Liste des réservations</h2>
+<table mat-table [dataSource]="reservations" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="userId">
+    <th mat-header-cell *matHeaderCellDef>Utilisateur</th>
+    <td mat-cell *matCellDef="let res">
+      {{ getUserEmail(res.userId) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="slotId">
+    <th mat-header-cell *matHeaderCellDef>Créneau</th>
+    <td mat-cell *matCellDef="let res">
+      {{ getSlotCode(res.slotId) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="start">
+    <th mat-header-cell *matHeaderCellDef>Début</th>
+    <td mat-cell *matCellDef="let res">
+      <input [(ngModel)]="res.startDate" *ngIf="editingId === res.id" type="date" name="start-{{res.id}}" />
+      <span *ngIf="editingId !== res.id">{{ formatDate(res.startDate) }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="end">
+    <th mat-header-cell *matHeaderCellDef>Fin</th>
+    <td mat-cell *matCellDef="let res">
+      <input [(ngModel)]="res.endDate" *ngIf="editingId === res.id" type="date" name="end-{{res.id}}" />
+      <span *ngIf="editingId !== res.id">{{ formatDate(res.endDate) }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Actions</th>
+    <td mat-cell *matCellDef="let res">
+      <button mat-button *ngIf="editingId !== res.id" (click)="enableEdit(res)">Modifier</button>
+      <button mat-button color="primary" *ngIf="editingId === res.id" (click)="updateReservation(res)">Sauvegarder</button>
+      <button mat-button color="warn" (click)="deleteReservation(res.id)">Supprimer</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>

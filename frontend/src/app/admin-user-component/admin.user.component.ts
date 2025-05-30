@@ -6,7 +6,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
-import {RegisterService} from '../service/register.service';
+import {UserService} from '../service/user.service';
 import {UserForSecretary, UserUpdateRequest} from '../model/register.model';
 
 @Component({
@@ -31,7 +31,7 @@ export class AdminUserComponent implements OnInit {
   userForm: FormGroup;
   editingUserId: string | null = null;
 
-  constructor(private registerService: RegisterService, private fb: FormBuilder) {
+  constructor(private registerService: UserService, private fb: FormBuilder) {
     this.userForm = this.fb.group({
       firstname: [''],
       lastname: [''],

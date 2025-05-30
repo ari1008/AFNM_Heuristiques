@@ -10,7 +10,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
-import {ReservationServiceTwo} from '../service/reservation.service.two';
+import {ReservationService} from '../service/reservation.service';
 import {ReservationModel} from '../model/reservation.model';
 
 
@@ -55,7 +55,7 @@ export class SlotDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     public router: Router,
-    private reservationService: ReservationServiceTwo
+    private reservationService: ReservationService
   ) {
   }
 
@@ -65,46 +65,6 @@ export class SlotDetailComponent implements OnInit {
     this.userEmail = localStorage.getItem('email') || '';
     this.userId = localStorage.getItem('userId') || '';
 
-    if (this.slotId) {
-      // Charger les réservations depuis l'API
-      this.loadReservations();
-    }
-  }
-
-  loadReservations(): void {
-    this.isLoading = true;
-    this.reservationService.getAllReservations().subscribe({
-      next: (data) => {
-        console.log(`this is data ${Object.keys(data).length}`);
-        if (data.length > 0) {
-          console.log(`this is data ${data[0].userId}`);
-        }
-
-        // Filtrer les réservations pour ce slot
-        this.apiReservations = data
-          .filter((r) => this.verification(r.slot.number, r.slot.row))
-          .map((r) => {
-            return {
-              slotId: {
-                number: r.slot.number,
-                row: r.slot.row
-              },
-              reservedBy: r.userId,
-              startDate: new Date(r.startDateTime),
-              endDate: new Date(r.endDateTime)
-            };
-          });
-        this.isLoading = false;
-      },
-      error: (err) => {
-        if (err.status === 401) {
-          this.navigateToLogin();
-        } else {
-          this.errorMessage = 'Erreur lors du chargement des réservations';
-        }
-        this.isLoading = false;
-      }
-    });
   }
 
   isAdminOrSecretary(): boolean {
@@ -165,27 +125,6 @@ export class SlotDetailComponent implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
-
-    this.reservationService.makeReservation(
-      this.selectedDates,
-      this.slotId,
-      this.selectedPeriod
-    ).subscribe({
-      next: () => {
-        this.successMessage = '✅ Réservation effectuée !';
-        this.selectedDates = [];
-        this.loadReservations();
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-        if (err.status === 401) {
-          this.navigateToLogin();
-        } else {
-          this.errorMessage = err.error?.message || err.error || 'Erreur lors de la création de la réservation';
-        }
-      }
-    });
   }
 
   navigateToLogin(): void {

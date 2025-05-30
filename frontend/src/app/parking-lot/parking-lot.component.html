@@ -1,43 +1,33 @@
-<div class="container" xmlns="http://www.w3.org/1999/html">
+<div class="container">
   <h2>Parking Lot Map</h2>
 
-  <p>
-    ⚡ Borne de recharge électrique
-    <br>
-    🔒 Place indisponible pour la journée en cours
-  </p>
-
-  <!-- ENTRY-->
-  <div class="entry-row">
-    <div class="entry-label">⬇️ ENTRY</div>
+  <div class="legend">
+    <span><span class="legend-box has-plug">⚡</span> Borne électrique</span>
+    <span><span class="legend-box reserved">🔒</span> Réservée aujourd’hui</span>
+    <span><span class="legend-box blocked">🚫</span> Non autorisée</span>
   </div>
 
-  <!-- Parking grid -->
+  <button routerLink="/checkin" class="checkin-btn">Faire le checkin</button>
+
+  <div class="entry-row"><div class="entry-label">⬇️ ENTRY</div></div>
+
   <div *ngFor="let row of rows" class="row">
     <ng-container *ngFor="let col of columns">
-      <ng-container *ngIf="!getSlot(row, col).occupied; else occupiedSlot">
-        <ng-container *ngIf="isLoggedIn">
-          <a
-            [routerLink]="['/slot', getSlot(row, col).id]"
-            class="slot free"
-            [class.has-plug]="isElectricRow(row)">
-            {{ getSlot(row, col).id }}
-            <span *ngIf="isElectricRow(row)">⚡</span>
-          </a>
-        </ng-container>
+      <ng-container *ngIf="getSlotBlockReason(row, col) | async as reason; else showSlot">
+        <div class="slot blocked" [title]="reason">🚫</div>
       </ng-container>
 
-      <ng-template #occupiedSlot>
-        <div class="slot occupied" [class.has-plug]="isElectricRow(row)">
-          {{ getSlot(row, col).id }} 🔒
-          <span *ngIf="isElectricRow(row)">⚡</span>
-        </div>
+      <ng-template #showSlot>
+        <a
+          [routerLink]="['/reservation', getSlotId(row, col)]"
+          class="slot free"
+          [class.has-plug]="(isElectricSlot(row, col) | async)">
+          {{ getSlotId(row, col) }}
+          <span *ngIf="(isElectricSlot(row, col) | async)">⚡</span>
+        </a>
       </ng-template>
     </ng-container>
   </div>
 
-  <!-- EXIT-->
-  <div class="exit-row">
-    <div class="exit-label">EXIT ⬇️</div>
-  </div>
+  <div class="exit-row"><div class="exit-label">EXIT ⬇️</div></div>
 </div>

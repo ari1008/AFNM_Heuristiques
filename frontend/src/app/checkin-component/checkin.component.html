@@ -1,0 +1,19 @@
+<h2>Check-In Parking</h2>
+
+<form [formGroup]="checkinForm" (ngSubmit)="submit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Choisir une place</mat-label>
+    <mat-select formControlName="slotId">
+      <mat-option *ngFor="let slot of allSlots" [value]="slot.id">
+        {{ slot.code }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="checkinForm.invalid">
+    Valider le Check-In
+  </button>
+</form>
+
+<div *ngIf="message" style="color: green; margin-top: 12px;">{{ message }}</div>
+<div *ngIf="error" style="color: red; margin-top: 12px;">{{ error }}</div>

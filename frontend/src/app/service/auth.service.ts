@@ -69,7 +69,10 @@ export class AuthService {
     const token = localStorage.getItem('session');
 
     const headers = token
-      ? new HttpHeaders().set('Authorization', token)
+      ? new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`
+      })
       : undefined;
 
     return new Observable(observer => {

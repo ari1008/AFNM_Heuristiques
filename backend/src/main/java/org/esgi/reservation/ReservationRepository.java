@@ -11,9 +11,22 @@ import java.util.UUID;
 
 @ApplicationScoped
 public class ReservationRepository implements PanacheRepository<ReservationEntity> {
+
     public ReservationEntity findById(UUID id) {
         return find("id", id).firstResult();
     }
+
+    public boolean existsBySlotAndDateRange(UUID slotId, LocalDate startDate, LocalDate endDateInclusive) {
+        return getEntityManager()
+                .createQuery("SELECT COUNT(r) > 0 FROM ReservationEntity r " +
+                        "WHERE r.slot.id = :slotId " +
+                        "AND r.startDate <= :endDateInclusive AND r.endDate >= :startDate", Boolean.class)
+                .setParameter("slotId", slotId)
+                .setParameter("startDate", startDate)
+                .setParameter("endDateInclusive", endDateInclusive)
+                .getSingleResult();
+    }
+
     public ReservationEntity findReservationOfTheDay(UUID userId) {
         LocalDate today = LocalDate.now(ZoneId.of("Europe/Paris"));
         LocalDate dayStart = today;
@@ -28,6 +41,7 @@ public class ReservationRepository implements PanacheRepository<ReservationEntit
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No reservation today for user"));
     }
+
     public List<ReservationEntity> findUnattendedReservations() {
         LocalDate today = LocalDate.now(ZoneId.of("Europe/Paris"));
         return getEntityManager()
@@ -36,4 +50,9 @@ public class ReservationRepository implements PanacheRepository<ReservationEntit
                 .setParameter("today", today)
                 .getResultList();
     }
+
+    public List<ReservationEntity> findAllBySlotId(UUID slotId) {
+        return list("slot.id", slotId);
+    }
+
 }

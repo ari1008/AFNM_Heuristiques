@@ -8,5 +8,4 @@ public class ReservationRequest {
     public UUID userId;
     public List<LocalDate> dates;
     public UUID slotId;
-    public String period;
 }

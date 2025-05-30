@@ -34,4 +34,10 @@ public class ParkingSlotResource {
 
         return parkingSlotService.findAvailable(start, end);
     }
+
+
+    @GET
+    public List<ParkingSlotEntity> findAllSlots(){
+        return parkingSlotService.findAllSlots();
+    }
 }

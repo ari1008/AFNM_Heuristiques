@@ -8,6 +8,8 @@ import org.esgi.reservation.ReservationService;
 import org.esgi.reservation.resources.dto.in.CheckInRequest;
 import org.esgi.reservation.resources.dto.in.ReservationRequest;
 
+import java.util.UUID;
+
 @Path("/reservations")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,4 +38,11 @@ public class ReservationResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }
     }
+
+    @GET
+    @Path("/slot/{slotId}")
+    public Response getAllBySlot(@PathParam("slotId") UUID slotId) {
+        return Response.ok(reservationService.getAllReservationsBySlotId(slotId)).build();
+    }
+
 }

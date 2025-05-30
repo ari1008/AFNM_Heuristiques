@@ -19,4 +19,9 @@ public class ParkingSlotService {
     public List<ParkingSlotEntity> findAvailable(LocalDate from, LocalDate to) {
         return slotRepository.findAvailableSlots(from, to);
     }
+
+    @Transactional
+    public List<ParkingSlotEntity> findAllSlots(){
+        return slotRepository.findAllSlots();
+    }
 }
