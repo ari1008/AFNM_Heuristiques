@@ -13,6 +13,8 @@ import {ROLES} from '../model/user.model';
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn = false;
+  firstName: string = '';
+  lastName: string = '';
   userEmail = '';
   role = '';
   isSecretary = false;
@@ -22,6 +24,8 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.authService.currentUser.subscribe((user: AuthUser | null) => {
       this.isLoggedIn = !!user;
+      this.firstName = user?.firstname || '';
+      this.lastName = user?.lastname || '';
       this.userEmail = user?.email || '';
       this.role = user?.role || '';
       this.isSecretary = this.role === ROLES.SECRETARY.name;
