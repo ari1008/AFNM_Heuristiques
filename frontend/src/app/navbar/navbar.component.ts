@@ -40,10 +40,6 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  redirectToLogin(): void {
-    this.router.navigate(['/login']);
-  }
-
   managementUser(): void {
     this.router.navigate(['/admin/users']);
   }
