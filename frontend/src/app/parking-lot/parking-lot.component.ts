@@ -138,6 +138,10 @@ export class ParkingLotComponent implements OnInit, OnChanges {
         next: () => {
           alert('Réservation réussie');
           this.selectedSlotCode = null;
+
+          this.parkingService.getAvailableSlots(start, end).subscribe(updatedSlots => {
+            this.parking = updatedSlots;
+          });
         },
         error: (err) => {
           this.error = err.message;
