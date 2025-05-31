@@ -84,7 +84,6 @@ export class ParkingService {
       next: (data) => {
         this.cachedSlots = data;
 
-        // Création du dictionnaire (Map)
         this.cachedSlotsMap = new Map();
         for (const slot of data) {
           this.cachedSlotsMap.set(slot.code, slot);
