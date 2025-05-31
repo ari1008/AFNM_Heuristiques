@@ -50,9 +50,19 @@ export class ParkingService {
     );
   }
 
+  getAvailableSlots(from: Date, to: Date): Observable<Slot[]> {
+    const fromStr = from.toISOString().split('T')[0];
+    const toStr = to.toISOString().split('T')[0];
+
+    return this.http.get<Slot[]>(
+      `${this.apiUrl}/available?from=${fromStr}&to=${toStr}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getByCode(code: string): Observable<Slot | undefined> {
     return this.getAllAsMap().pipe(
-      map(slotsMap => slotsMap.get(code))
+      map(slotsMap => slotsMap ? slotsMap.get(code) : undefined)
     );
   }
 

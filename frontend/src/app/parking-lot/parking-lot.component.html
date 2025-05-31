@@ -1,16 +1,20 @@
+<!-- Légende + Checkin -->
 <div class="container">
   <h2>Parking Lot Map</h2>
 
   <div class="legend">
     <span><span class="legend-box has-plug">⚡</span> Borne électrique</span>
-    <span><span class="legend-box reserved">🔒</span> Réservée aujourd’hui</span>
+    <span><span class="legend-box reserved">🔒</span> Réservée</span>
     <span><span class="legend-box blocked">🚫</span> Non autorisée</span>
   </div>
 
   <button routerLink="/checkin" class="checkin-btn">Faire le checkin</button>
 
-  <div class="entry-row"><div class="entry-label">⬇️ ENTRY</div></div>
+  <div class="row row-labels">
+    <div class="entry-label">⬇️ ENTRY</div>
+  </div>
 
+  <!-- Grille de parking -->
   <div *ngFor="let row of rows" class="row">
     <ng-container *ngFor="let col of columns">
       <ng-container *ngIf="getSlotBlockReason(row, col) | async as reason; else showSlot">
@@ -18,16 +22,32 @@
       </ng-container>
 
       <ng-template #showSlot>
-        <a
-          [routerLink]="['/reservation', getSlotId(row, col)]"
-          class="slot free"
-          [class.has-plug]="(isElectricSlot(row, col) | async)">
-          {{ getSlotId(row, col) }}
-          <span *ngIf="(isElectricSlot(row, col) | async)">⚡</span>
-        </a>
+        <ng-container *ngIf="!isReserved(getSlotId(row, col)); else reservedSlot">
+          <div
+            class="slot free selectable"
+            [class.has-plug]="(isElectricSlot(row, col) | async)"
+            [class.selected]="selectedSlotCode === getSlotId(row, col)"
+            (click)="selectSlot(getSlotId(row, col))">
+            {{ getSlotId(row, col) }}
+            <span *ngIf="(isElectricSlot(row, col) | async)">⚡</span>
+          </div>
+        </ng-container>
+        <ng-template #reservedSlot>
+          <div class="slot reserved" [class.has-plug]="(isElectricSlot(row, col) | async)">
+            {{ getSlotId(row, col) }} 🔒
+            <span *ngIf="(isElectricSlot(row, col) | async)">⚡</span>
+          </div>
+        </ng-template>
       </ng-template>
     </ng-container>
   </div>
 
-  <div class="exit-row"><div class="exit-label">EXIT ⬇️</div></div>
+  <div class="row row-labels end">
+    <div class="exit-label">EXIT ⬇️</div>
+  </div>
+
+  <div class="confirmation" *ngIf="selectedSlotCode">
+    <p>Place sélectionnée : <strong>{{ selectedSlotCode }}</strong></p>
+    <button (click)="submitReservation()">Réserver cette place</button>
+  </div>
 </div>

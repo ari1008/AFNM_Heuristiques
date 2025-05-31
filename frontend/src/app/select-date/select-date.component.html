@@ -1,0 +1,15 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="date-form">
+  <h2>Sélectionner les dates de votre réservation</h2>
+
+  <div class="form-group">
+    <label for="startDate">📅 Date de début</label>
+    <input type="date" id="startDate" formControlName="startDate">
+  </div>
+
+  <div class="form-group">
+    <label for="endDate">📅 Date de fin</label>
+    <input type="date" id="endDate" formControlName="endDate">
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">Afficher les disponibilités</button>
+</form>

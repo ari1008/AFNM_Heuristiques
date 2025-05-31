@@ -1,0 +1,8 @@
+<div class="viewer-layout">
+  <div class="left-panel">
+    <app-select-date (dateRangeSelected)="onDateRangeSelected($event)"></app-select-date>
+  </div>
+  <div class="right-panel">
+    <app-parking-lot [dateRange]="selectedDateRange"></app-parking-lot>
+  </div>
+</div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CheckInRequest, ReservationRequest } from '../model/reservation.model';
+import { CheckInRequest } from '../model/reservation.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,20 +13,24 @@ export class ReservationService {
   constructor(private http: HttpClient) {}
 
   createReservation(userId: string, dates: string[], slotId: string): Observable<void> {
-    const payload: ReservationRequest = { userId, dates, slotId };
-    return this.http.post<void>(this.apiUrl, payload, { headers: this.getHeaders() })
-      .pipe(catchError(this.handleError('création de réservation')));
+    const body = { userId, slotId, dates };
+    const headers = this.getAuthHeaders();
+    console.log(body)
+    console.log(headers)
+    return this.http.post<void>(this.apiUrl, body, { headers });
   }
 
   checkIn(userId: string, slotId: string): Observable<void> {
     const payload: CheckInRequest = { userId, slotId };
-    return this.http.post<void>(`${this.apiUrl}/checkin`, payload, { headers: this.getHeaders() })
+    return this.http.post<void>(`${this.apiUrl}/checkin`, payload, { headers: this.getAuthHeaders() })
       .pipe(catchError(this.handleError('check-in')));
   }
 
-  private getHeaders(): HttpHeaders {
+  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('session');
-    if (!token) throw new Error('Token d\'authentification non trouvé');
+    if (!token) {
+      throw new Error('Token d\'authentification non trouvé');
+    }
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
